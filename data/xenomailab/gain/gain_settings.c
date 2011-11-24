@@ -28,7 +28,6 @@ RT_MUTEX gs_mtx;
 void load_gs(void){
 
 	get_double("Operation","Gain",&gs->gain);
-	get_double("Operation","Gain2",&gs->gain2);
 
 	get_int("Task","Priority",&gs->task_prio);
 }
@@ -40,7 +39,6 @@ void load_gs(void){
 void unload_gs(void){
 
 	store_double("Operation", "Gain", gs->gain);
-	store_double("Operation", "Gain2", gs->gain2);
 
 	store_int("Task","Priority",gs->task_prio);
 }

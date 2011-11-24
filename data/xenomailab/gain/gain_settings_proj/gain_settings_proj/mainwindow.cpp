@@ -49,7 +49,6 @@ MainWindow::~MainWindow()
 void MainWindow::setSettings()
 {
     newEntry("Gain:",&gs->gain);
-    newEntry("Gain2:",&gs->gain2);
 }
 
 

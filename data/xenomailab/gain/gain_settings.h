@@ -28,7 +28,6 @@ extern "C"
 
 struct global_settings{
 	double gain;
-	double gain2;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
 };
