@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=0.1
+Name=XenomaiLab
+GenericName=XenomaiLab
+Comment=A simple framework for real-time digital control using Xenomai
+Icon=xenomailab
+Exec=xenomailab
+Terminal=false
+Type=Application
+Categories=Qt;Office;
