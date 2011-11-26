@@ -79,7 +79,8 @@ QString Line::fullName() const
 
     //qDebug() << "Line::fullName: Initvalue:" << d_initValue.rows << d_initValue.columns;
     //qDebug() << "Line::fullName: temp:" << temp.rows << temp.columns;
-    return d_name+"="+buf;
+    //return d_name+"="+buf;
+    return d_name;
 }
 
 bool Line::isValidInitValue(QString value)
