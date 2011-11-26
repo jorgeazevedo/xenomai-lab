@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "signal_generator_settings.h"	//Contais ERROR and DEBUG macros
+#include "signal_generator_settings.h"
 
 long* current_period;
 
@@ -28,13 +28,25 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	double sample;
 	static int n=0;
 	long period=*current_period;
+	int halfpointx;
+	float slope;
 
 	switch(gs->wave[0]){
 		case 'S': case 's':
-			sample=sinf(2*M_PI*gs->wave_freq*n*period*pow(10,-9))*gs->wave_amp+gs->wave_dc;
+			sample=sinf(2*M_PI*gs->wave_freq*n*period*pow(10,-9))*gs->wave_amp/2+gs->wave_dc;
 			break;
 		case 'T': case 't':
-			sample=sinf(2*M_PI*gs->wave_freq*n*period*pow(10,-9))*gs->wave_amp+gs->wave_dc;
+			halfpointx=0.5/(gs->wave_freq*period*pow(10,-9));
+			slope=gs->wave_amp/halfpointx;
+			if(n<=halfpointx)
+				sample=slope*n-gs->wave_amp/2;
+			else
+				sample=-slope*n+(3*gs->wave_amp/2);
+
+			//wrap around
+			if(n>(2*halfpointx))
+				n=-1;
+
 			break;
 		case 'P': case 'p':
 			if(n<=(gs->wave_duty*0.01)/(gs->wave_freq*period*pow(10,-9)))
