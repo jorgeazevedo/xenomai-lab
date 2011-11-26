@@ -1,0 +1,11 @@
+The blackbox is quite literaly an old blackbox that was laying around in my department. It has a 12bit ADC and a 12bit DAC operated by the parallel port. I think it was built in 1988 by my supervisor.
+
+This example shows how to encapsulate the IO operations behind a .h and leave the block code simplified. The .h should be deposited in the "include" folder. This way the Makefile of each block only needs $(INCLUDE)blackbox.c added as a dependency.
+
+An RT_MUTEX is used to ensure that the ADC and DAC don't mess with each other.
+
+To test it I hooked up the signal_generator to the DAC and pushed the tick period down to 100us. Jitter should be around 10% at this point. I tried 50us and the system crashed. The wave was still being output though.
+
+To test the ADC, I hooked it up to an oscilloscope and to a display. 
+
+When using both at the same time, the system crashed with a tick period of 500us. 
