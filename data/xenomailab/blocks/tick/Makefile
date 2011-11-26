@@ -3,7 +3,7 @@ INCLUDE=$(HOME)/.xenomailab/include/
 ### List of applications to be build
 EXECUTABLE=tick
 
-DEP=tick.c tick_settings.c $(INCLUDE)rt_block_io.c $(INCLUDE)settings.c $(INCLUDE)strmap.c $(INCLUDE)mtrx.c
+DEP=tick.c tick_settings.c $(INCLUDE)rt_block_io.c $(INCLUDE)settings.c $(INCLUDE)strmap.c $(INCLUDE)mtrx.c 
 OBJS=$(DEP:.c=.o)
 
 SETTINGS_EXECUTABLE=$(EXECUTABLE)_settings
