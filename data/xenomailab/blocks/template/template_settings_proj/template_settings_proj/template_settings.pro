@@ -37,7 +37,7 @@ HEADERS  += mainwindow.h\
             $${INCLUDEDIR}mtrx.h\
             $${DESTDIR}template_settings.h
 
-INCLUDEPATH +=  $$INCLUDEDIR $$DESTDIR /usr/include/xenomai
+INCLUDEPATH +=  $$INCLUDEDIR $$DESTDIR /usr/xenomai/include
 LIBS += -L/usr/lib -lxenomai -lpthread -lnative -Xlinker -rpath -Xlinker /usr/lib
 
 QMAKE_CXXFLAGS += -D_GNU_SOURCE -D_REENTRANT -Wall -pipe -D__XENO__
