@@ -21,7 +21,7 @@
 #include "template_settings.h"
 
 Matrix periodic_function(Matrix* inputChannel,short numChannels){
-	Matrix ret;
+	Matrix ret=empty_matrix(1,1);
 
 	/*
 	 * Insert periodic code here.
@@ -32,7 +32,7 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 }
 
 void loop(void *arg){
-	Matrix outputMatrix;
+	Matrix outputMatrix=empty_matrix(1,1);
 
 	/*
 	 * Insert initialization code here.
