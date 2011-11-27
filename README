@@ -14,5 +14,8 @@ sudo apt-get install libboost-graph-dev
 qmake
 make
 
-2.Prepare workspace
-cp -r data/xenomailab/* ~/.xenomailab/
+2.Install
+sudo make install
+
+3.Uninstall
+sudo make uninstall
