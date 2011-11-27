@@ -6,13 +6,10 @@
 
 QT       += core gui
 
-TARGET = XenomaiLab
+TARGET = xenomailab
 TEMPLATE = app
 
 CONFIG += static
-
-#DEFINES += QDEBUG = \"qDebug()\"
-#DEFINES = QDEBUG qDebug()
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -61,3 +58,40 @@ FORMS    += mainwindow.ui
 RESOURCES     = xenomailab.qrc
 
 QMAKE_CXXFLAGS += -Wno-deprecated
+
+#added the -a. this retains the owner of the files no copy!
+QMAKE_INSTALL_DIR = cp -a -f -r
+
+#unix:configfiles.extra = chmod +x data/config/WallpaperChanger/Scripts/*; make clean; mv -f wallch-1 wallch
+#configfiles.files += data/config/*
+#configfiles.path = /usr/share/
+
+binfile.files += xenomailab
+binfile.path = /usr/bin/
+
+docfiles.files += data/doc/*
+docfiles.path = /usr/share/doc/xenomailab/
+
+manfiles.files += data/man/xenomailab.1.gz
+manfiles.path = /usr/share/man/man1/
+
+shortcutfiles.files += data/xenomailab.desktop
+shortcutfiles.path = /usr/share/applications/
+
+iconfiles.files += data/icons/48x48/apps/xenomailab.png
+iconfiles.path = /usr/share/icons/hicolor/48x48/apps
+
+pixmapfiles.files += data/pixmap/*
+pixmapfiles.path = /usr/share/pixmaps/
+
+homefolder.files += data/xenomailab/*
+homefolder.path = $$(HOME)/.xenomailab/
+
+#INSTALLS += configfiles
+INSTALLS += binfile
+INSTALLS += docfiles
+INSTALLS += manfiles
+INSTALLS += shortcutfiles
+INSTALLS += iconfiles
+INSTALLS += pixmapfiles
+INSTALLS += homefolder

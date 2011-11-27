@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=0.1
-Name=XenomaiLab
-GenericName=XenomaiLab
-Comment=A simple framework for real-time digital control using Xenomai
+Name=Xenomai Lab
+GenericName=Xenomai Lab
+Comment=A platform for digital real-time control
 Icon=xenomailab
 Exec=xenomailab
 Terminal=false
