@@ -20,42 +20,35 @@
 
 #include "tick_settings.h"
 
-Matrix periodic_function(Matrix* inputChannel,short numChannels){
-	Matrix retMatrix;
-	static double value=4.0;
-
-	value++;
-	retMatrix.matrix[0][0]=value;
-
-
-	return retMatrix;
-}
+//No period bellow 100us
+#define SAFEZONE 100000
 
 void loop(void *arg){
 	RT_HEAP sampling_heap;
-	Matrix outputMatrix=new_matrix("[4]");
+	Matrix outputMatrix=empty_matrix(1,1);
 	long* current_period;
 	int create;
 
+	//This works as a global variable
 	current_period=(long*) create_shm(&sampling_heap,"tickPeriod",sizeof(long),&create);
 
 	*current_period=gs->sampling_period*1000;
+
+	if(*current_period<SAFEZONE)
+		*current_period=SAFEZONE;
+
 	rt_task_set_periodic(NULL, TM_NOW,*current_period);
 
-	DEBUG("Ticking with period %ld\n",*current_period);
-
-	while (running) {
-		// DEBUG("Ticking with period %ld\n",*current_period);
+	while(running){
 		rt_task_wait_period(NULL);
-		settings_lock(&gs_mtx);
-
-		outputMatrix=periodic_function(io.input_result,io.input_num);
 
 		write_outputs(outputMatrix);
-		if(*current_period==0)
-			break;
+
+		//Change period if changed in GUI
 		if(*current_period!=gs->sampling_period*1000){
 			*current_period=gs->sampling_period*1000;
+			if(*current_period<SAFEZONE)
+				*current_period=SAFEZONE;
 			rt_task_set_periodic(NULL, TM_NOW,*current_period);
 		}
 	}

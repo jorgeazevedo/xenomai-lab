@@ -15,4 +15,4 @@ qmake
 make
 
 2.Prepare workspace
-cp -r data/xenomailab ~/.xenomailab
+cp -r data/xenomailab/* ~/.xenomailab/
