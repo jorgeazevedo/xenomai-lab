@@ -18,25 +18,23 @@ for this are available [here](http://www.xenomai.org/index.php/Non-root_RT), but
 an abridged tutorial for Ubuntu or other Debian based systems is available
 in Appendix A.
 
-
-
 ### Dependencies
 
-`sudo apt-get install libboost-graph-dev qt4-dev-tools build-essential`
+    $ sudo apt-get install libboost-graph-dev qt4-dev-tools build-essential
 
 ### Compile Xenomai Lab:
 
-`qmake`
+    $ qmake
 
-`make`
+    $ make
 
 ### Install
 
-`sudo make install`
+    $ sudo make install
 
 ### Uninstall
 
-`sudo make uninstall`
+    $ sudo make uninstall
 
 Appendix
 --------
@@ -50,31 +48,31 @@ boot.
 
 Adding a user to the xenomai group can be doing via usermod
 
-`sudo usermod -a -G xenomai USERNAME`
+    $ sudo usermod -a -G xenomai USERNAME
 
 To confirm, we can check /etc/groups with
 
-`cat /etc/group | grep xenomai`
+    $ cat /etc/group | grep xenomai
 
 which would yield
 
-`xenomai:x:123:USERNAME`
+    xenomai:x:123:USERNAME
 
 This means the xenomai group id is **123**, and has for members only USERNAME.
 
 To pass this argument to the nucleus is a question of adding the parameter to
 grub. For example
 
-`sudo gedit /etc/default/grub`
+    $ sudo gedit /etc/default/grub
 
 And edit the line
 
-`GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"`
+    GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
 
 so that it has the argument at the end
 
-`GRUB_CMDLINE_LINUX_DEFAULT="quiet splash xeno_nucleus.xenomai_gid=125"`
+    GRUB_CMDLINE_LINUX_DEFAULT="quiet splash xeno_nucleus.xenomai_gid=125"
 
 Finally, updating grub will load the new configuration
 
-`sudo update-grub`
+    $ sudo update-grub
