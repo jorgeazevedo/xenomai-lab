@@ -15,6 +15,7 @@ A fairly standard procedure.
 1. Compile Xenomai Lab:
 
 `qmake`
+
 `make`
 
 2. Install
