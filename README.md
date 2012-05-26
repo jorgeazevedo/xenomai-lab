@@ -16,7 +16,7 @@ Xenomai Lab needs Xenomai installed on the target system. Xenomai 2.5.5.2 and
 In addition to this, Xenomai Lab needs non-root real-time access. Instructions
 for this are available [here](http://www.xenomai.org/index.php/Non-root_RT), but
 an abridged tutorial for Ubuntu or other Debian based systems is available
-in Appendix A.
+in the Appendix section.
 
 ### Dependencies
 
@@ -39,7 +39,7 @@ in Appendix A.
 Appendix
 --------
 
-### Appendix A
+### Enable non-root user access to real-time in Ubuntu
 
 Enabling non-root real-time access in Ubuntu (or other similiar Debian based
 distros) consists in merely two steps. One must add the intended user to
