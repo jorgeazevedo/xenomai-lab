@@ -8,7 +8,7 @@ How to:
 
 0.Dependencies
 
-sudo apt-get install libboost-graph-dev
+sudo apt-get install libboost-graph-dev qt4-dev-tools build-essential
 
 1.Compile Xenomai Lab:
 qmake
