@@ -8,20 +8,20 @@ Installation
 
 A fairly standard procedure.
 
-0. Dependencies
+### Dependencies
 
 `sudo apt-get install libboost-graph-dev qt4-dev-tools build-essential`
 
-1. Compile Xenomai Lab:
+### Compile Xenomai Lab:
 
 `qmake`
 
 `make`
 
-2. Install
+### Install
 
 `sudo make install`
 
-3. Uninstall
+### Uninstall
 
 `sudo make uninstall`
