@@ -36,6 +36,31 @@ in the Appendix section.
 
     $ sudo make uninstall
 
+Working with Blocks
+-------------------
+
+### Create a new one
+
+Xenomai Lab comes bundled with several useful blocks, but adding new ones is
+easy. All blocks are stored in ~/.xenomailab/blocks. To add a new one, simply
+run the newblock.sh script in that folder and add your new block to 
+blocks.conf.
+
+Here's an example
+
+    $ cd ~/.xenomailab/blocks/
+    $ ./newblock.sh example_block
+    $ gedit blocks.conf
+
+Then add your block to list either under Real-Time, if it's a xenomai task,
+ or Non Real-Time, if it's a standard linux program.
+
+    [Real-Time]
+    ...
+    example_bock=square
+
+All done!
+
 Appendix
 --------
 
