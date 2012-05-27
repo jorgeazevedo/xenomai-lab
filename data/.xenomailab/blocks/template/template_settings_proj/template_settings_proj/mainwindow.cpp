@@ -26,7 +26,7 @@ MainWindow::MainWindow(const QString &execName, const QString &name, QWidget *pa
     /*
      * Sets the text for the top half of the dialog.
      */
-    fillDialog("Template","This is the paragraph describing what the block does");
+    fillDialog("template","This is the paragraph describing what the block does");
 }
 
 MainWindow::~MainWindow()
@@ -54,15 +54,11 @@ MainWindow::~MainWindow()
 void MainWindow::setSettings()
 {
     /*
-     * Settings controls
-     * e.g.
-    newComboBox("Wave form:",QStringList("Sine") << "PWM" << "Triangular",gs->wave);
-    newEntry("Frequency (<i>Hz</i>):",&gs->wave_freq);
-    newEntry("Amplitude:",&gs->wave_amp);
-    newEntry("DC:",&gs->wave_dc);
-    newEntry("Duty Cycle (<i>%</i>):",&gs->wave_duty);
-    */
-
+     * Change this code.
+     */
+    newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
+    newEntry("anInt:",&gs->anInt);
+    newEntry("aDouble:",&gs->aDouble);
 }
 
 

@@ -29,13 +29,11 @@ extern "C"
 struct global_settings{
 
 	/*
-	 * Insert code here.
-	 *
-	 * Example:
-        char wave[40];
-        double wave_amp;
-        Matrix Am;
+	 * Change this code.
 	 */
+	char aString[40];
+	int anInt;
+	double aDouble;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
 };

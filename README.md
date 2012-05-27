@@ -44,25 +44,26 @@ Working with Blocks
 
 Xenomai Lab comes bundled with several useful blocks, but adding new ones is
 easy. All blocks are stored in `~/.xenomailab/blocks`. To add a new one, simply
-run the `newblock.sh` script in that folder and add your new block to 
-`blocks.conf`.
+run the `newblock.sh` script in that folder.
 
 Here's an example
 
     $ cd ~/.xenomailab/blocks/
     $ ./newblock.sh example_block
-    $ gedit blocks.conf
 
-Then add your block to list either under Real-Time, if it's a xenomai task,
- or Non Real-Time, if it's a standard linux program.
+If you start Xenomai Lab, you'll see your new block listed on the left-hand
+side under "Real-Time".
 
-Continuing the example
+If your block is not supposed to run in real-time, you can change it in the
+`blocks.conf` text-file in the blocks directory. 
+
+    $ gedit ~/.xenomailab/blocks/blocks.conf
+
+There, you can see your block listed.
 
     [Real-Time]
     ...
     example_bock=square
-
-All done!
 
 ### Add some block settings
 
@@ -71,12 +72,11 @@ change some operational settings in runtime. The procedure to edit or add new
 settings to your own block is not complex per say, but it is somewhat
 extensive.
 
-There are **four types** of settings:
+There are **three types** of settings:
 
 * Strings (_char[]_)
 * Integer (_int_)
 * Doubles (_double_)
-* Matrices (_Matrix_)
 
 A block setting lives in **4 distinct places** inside the block folder.
 
@@ -94,7 +94,6 @@ type of settings
     aString=Str1
     anInt=40
     aDouble=40.0
-    aMatrix=[1 0 0; 0 1 0; 0 0 1]
     
     [Task]
     Priority=99
@@ -111,7 +110,6 @@ from your code.
         char aString[40];
         int anInt;
         double aDouble;
-        Matrix aMatrix;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
     };
@@ -137,7 +135,6 @@ Continuing our example
         get_string("Operation","aString",gs->aString);
         get_int("Operation","anInt",&gs->anInt);
         get_double("Operation","aDouble",&gs->aDouble);
-        get_matrix("Operation","aMatrix",&gs->aMatrix);
 
         get_int("Task","Priority",&gs->task_prio);
     }
@@ -145,7 +142,6 @@ Continuing our example
         store_string("Operation", "aString", gs->aString);
         store_int("Operation", "anInt", gs->anInt);
         store_double("Operation", "aDouble", gs->aDouble);
-        store_matrix("Operation","aMatrix",&gs->aMatrix);
 
         store_int("Task","Priority",gs->task_prio);
     }
@@ -170,7 +166,6 @@ Continuing with our example
         newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
         newEntry("anInt:",&gs->anInt);
         newEntry("aDouble:",&gs->aDouble);
-        newEntry("aMatrix:",&gs->aMatrix);
     }
 
 

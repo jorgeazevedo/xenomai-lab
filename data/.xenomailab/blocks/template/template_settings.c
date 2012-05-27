@@ -28,13 +28,11 @@ RT_MUTEX gs_mtx;
 void load_gs(void){
 
 	/*
-	 * Insert code here
-	 *
-	 * Example:
-	get_string("Operation","Wave",gs->wave);
-	get_double("Operation","DC",&gs->wave_dc);
-	get_matrix("Operation","Am",&gs->Am);
+	 * Change this code.
 	 */
+	get_string("Operation","aString",gs->aString);
+	get_int("Operation","anInt",&gs->anInt);
+	get_double("Operation","aDouble",&gs->aDouble);
 
 	get_int("Task","Priority",&gs->task_prio);
 }
@@ -46,13 +44,11 @@ void load_gs(void){
 void unload_gs(void){
 
 	/*
-	 * Insert code here
-	 *
-	 * Example:
-	store_string("Operation", "Wave", gs->wave);
-	store_double("Operation", "DC", gs->wave_dc);
-	store_matrix("Operation","Am",&gs->Am);
+	 * Change this code.
 	 */
+	store_string("Operation", "aString", gs->aString);
+	store_int("Operation", "anInt", gs->anInt);
+	store_double("Operation", "aDouble", gs->aDouble);
 
 	store_int("Task","Priority",gs->task_prio);
 }
