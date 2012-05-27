@@ -13,53 +13,60 @@ VERSION = 1.0.0
 
 CONFIG += static
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    diagramitem.cpp \
-    diagramscene.cpp \
-    diagramtextitem.cpp \
-    arrow.cpp \
-    blockdiagram.cpp \
-    block.cpp \
-    processresult.cpp \
-    settings.cpp \
-    strmap.cpp \
-    mtrx.c \
-    line.cpp \
-    filesettings.cpp \
-    projectfile.cpp \
-    blockregistry.cpp \
-    superblock.cpp \
-    workspace.cpp \
-    superline.cpp \
-    linepath.cpp
+DESTDIR = build/
+OBJECTS_DIR = build/.obj
+MOC_DIR = build/.moc
+RCC_DIR = build/.rcc
+UI_DIR = build/.ui
 
-HEADERS  += mainwindow.h \
-    diagramitem.h \
-    diagramscene.h \
-    diagramtextitem.h \
-    arrow.h \
-    blockdiagram.h \
-    block.h \
-    processresult.h \
-    settings.h \
-    strmap.h \
-    mtrx.h \
-    line.h \
-    filesettings.h \
-    projectfile.h \
-    blockregistry.h \
-    superblock.h \
-    workspace.h \
-    superline.h \
-    linepath.h \
-    macros.h
+SOURCES += src/main.cpp\
+           src/mainwindow.cpp \
+           src/diagramitem.cpp \
+           src/diagramscene.cpp \
+           src/diagramtextitem.cpp \
+           src/arrow.cpp \
+           src/blockdiagram.cpp \
+           src/block.cpp \
+           src/processresult.cpp \
+           src/settings.cpp \
+           src/strmap.cpp \
+           src/mtrx.c \
+           src/line.cpp \
+           src/filesettings.cpp \
+           src/projectfile.cpp \
+           src/blockregistry.cpp \
+           src/superblock.cpp \
+           src/workspace.cpp \
+           src/superline.cpp \
+           src/linepath.cpp
 
-FORMS    += mainwindow.ui
+HEADERS  += src/mainwindow.h \
+            src/diagramitem.h \
+            src/diagramscene.h \
+            src/diagramtextitem.h \
+            src/arrow.h \
+            src/blockdiagram.h \
+            src/block.h \
+            src/processresult.h \
+            src/settings.h \
+            src/strmap.h \
+            src/mtrx.h \
+            src/line.h \
+            src/filesettings.h \
+            src/projectfile.h \
+            src/blockregistry.h \
+            src/superblock.h \
+            src/workspace.h \
+            src/superline.h \
+            src/linepath.h \
+            src/macros.h
 
-RESOURCES     = xenomailab.qrc
+FORMS    += src/mainwindow.ui
+
+RESOURCES     = src/xenomailab.qrc
 
 QMAKE_CXXFLAGS += -Wno-deprecated
+
 
 
 
