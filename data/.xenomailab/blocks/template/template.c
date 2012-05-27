@@ -25,8 +25,10 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 
 	/*
 	 * Insert periodic code here.
-	 * e.g. ret=matrix_mul_double(&inputChannel[0], gs->gain);
 	 */
+	
+	//Default operation: apply -1 gain
+	ret=matrix_mul_double(&inputChannel[0], -1);
 
 	return ret;
 }
