@@ -91,7 +91,7 @@ values specified in this file. Here's an example `.conf` exemplifying the four
 type of settings
 
     [Operation]
-    aString=PWM
+    aString=Str1
     anInt=40
     aDouble=40.0
     aMatrix=[1 0 0; 0 1 0; 0 0 1]
@@ -108,7 +108,6 @@ settings, and the declaration of the `gs` variable used to access these settings
 from your code.
 
     struct global_settings{
-
         char aString[40];
         int anInt;
         double aDouble;
@@ -136,7 +135,7 @@ Continuing our example
 
     void load_gs(void){
         get_string("Operation","aString",gs->aString);
-        get_double("Operation","anInt",&gs->anInt);
+        get_int("Operation","anInt",&gs->anInt);
         get_double("Operation","aDouble",&gs->aDouble);
         get_matrix("Operation","aMatrix",&gs->aMatrix);
 
@@ -144,7 +143,7 @@ Continuing our example
     }
     void unload_gs(void){
         store_string("Operation", "aString", gs->aString);
-        store_double("Operation", "anInt", gs->anInt);
+        store_int("Operation", "anInt", gs->anInt);
         store_double("Operation", "aDouble", gs->aDouble);
         store_matrix("Operation","aMatrix",&gs->aMatrix);
 
@@ -168,10 +167,10 @@ Continuing with our example
 
     void MainWindow::setSettings()
     {
-    newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->wave);
-    newEntry("anInt:",&gs->anInt);
-    newEntry("aDouble:",&gs->aDouble);
-    newEntry("aMatrix:",&gs->aMatrix);
+        newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
+        newEntry("anInt:",&gs->anInt);
+        newEntry("aDouble:",&gs->aDouble);
+        newEntry("aMatrix:",&gs->aMatrix);
     }
 
 
