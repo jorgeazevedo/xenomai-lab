@@ -200,7 +200,63 @@ Using the `example_block` introduced in the last section, we should edit
 
     DEP=template.c template_settings.c $(INCLUDE)rt_block_io.c $(INCLUDE)settings.c $(INCLUDE)strmap.c $(INCLUDE)mtrx.c $(INCLUDE)example_library.c
 
+### Using the Oscilloscope
 
+As of yet, the oscilloscope is not deployment ready. However, due to its
+usefullness I have packaged it in `data/oscilloscope.tar.gz`.
+
+Installing the oscilloscope is a two-step process.
+
+#### Install Qwt
+
+The Oscilloscope requires [Qwt 6.0](http://qwt.sourceforge.net) or greater
+installed on the system.
+
+To install Qwt, download it from the official site and extract the tarball
+to a folder. In that folder, run
+
+    $ qmake
+    $ make
+    $ sudo make install
+
+Afterwards, add the library to ldconfig. To do this, find out Qwt's
+installation path
+
+    cd /usr/local/qwt*/lib/
+    pwd
+
+This returns something like `/usr/local/qwt-6.0.1/lib`. Add this string to
+
+    sudo vim /etc/ld.so.conf.d/qwt.conf
+
+Afterwards, call ldconfig to refresh all available libraries
+
+    sudo ldconfig
+
+To confirm this worked
+
+    ldconfig -p | grep qwt
+
+Which should return something akin to 
+
+    libqwtmathml.so.6 (libc6) => /usr/local/qwt-6.0.1/lib/libqwtmathml.so.6
+    libqwtmathml.so (libc6) => /usr/local/qwt-6.0.1/lib/libqwtmathml.so
+    libqwt.so.6 (libc6) => /usr/local/qwt-6.0.1/lib/libqwt.so.6
+    libqwt.so (libc6) => /usr/local/qwt-6.0.1/lib/libqwt.so
+
+
+#### Install the block
+
+Extract `data/oscilloscope.tar.gz` to `~/.xenomailab/blocks/` and add the
+oscilloscope to the **non real-time** list of blocks
+
+    sudo gedit ~/.xenomailab/blocks.conf
+
+So that
+
+    [Non Real-Time]
+    ...
+    oscilloscope=square
 
 Appendix
 --------
