@@ -26,6 +26,5 @@ sed -i $regex *.pro
 mv template_settings.pro $1_settings.pro
 cd ..
 mv template_settings_proj $1_settings_proj
-mv template_settings-build-desktop $1_settings-build-desktop
 cd ..
 mv template_settings_proj $1_settings_proj
