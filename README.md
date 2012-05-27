@@ -1,3 +1,4 @@
+
 Xenomai Lab
 ===========
 
@@ -39,12 +40,12 @@ in the Appendix section.
 Working with Blocks
 -------------------
 
-### Create a new one
+### Create a new block
 
 Xenomai Lab comes bundled with several useful blocks, but adding new ones is
-easy. All blocks are stored in ~/.xenomailab/blocks. To add a new one, simply
-run the newblock.sh script in that folder and add your new block to 
-blocks.conf.
+easy. All blocks are stored in `~/.xenomailab/blocks`. To add a new one, simply
+run the `newblock.sh` script in that folder and add your new block to 
+`blocks.conf`.
 
 Here's an example
 
@@ -55,11 +56,151 @@ Here's an example
 Then add your block to list either under Real-Time, if it's a xenomai task,
  or Non Real-Time, if it's a standard linux program.
 
+Continuing the example
+
     [Real-Time]
     ...
     example_bock=square
 
 All done!
+
+### Add some block settings
+
+One of the most powerfull features of Xenomai Lab's blocks is the ability to
+change some operational settings in runtime. The procedure to edit or add new
+settings to your own block is not complex per say, but it is somewhat
+extensive.
+
+There are **four types** of settings:
+
+* Strings (_char[]_)
+* Integer (_int_)
+* Doubles (_double_)
+* Matrices (_Matrix_)
+
+A block setting lives in **4 distinct places** inside the block folder.
+
+Lets illustrate these four places using our `example_block` from the previous
+section.
+
+#### example\_block.conf
+
+The `.conf` carries the **default value** of all settings. When you drag a new
+block to the canvas in Xenomai Lab, its settings will be initialized with the
+values specified in this file. Here's an example `.conf` exemplifying the four
+type of settings
+
+    [Operation]
+    aString=PWM
+    anInt=40
+    aDouble=40.0
+    aMatrix=[1 0 0; 0 1 0; 0 0 1]
+    
+    [Task]
+    Priority=99
+
+Notice that these variables must be a single word, with **no** spaces.
+
+#### example\_block\_settings.h
+
+This file contains both the declaration of the `struct` which holds the
+settings, and the declaration of the `gs` variable used to access these settings
+from your code.
+
+    struct global_settings{
+
+        char aString[40];
+        int anInt;
+        double aDouble;
+        Matrix aMatrix;
+
+        int task_prio;//Real time task priority (0-99, higher is greater)
+    };
+    extern struct global_settings* gs;
+
+Accessing these variables is as straightforward as it seems. To
+print the `aString` variable, the code would be
+
+    printf("aString:%s\n",gs->aString);
+
+#### example\_block\_settings.c
+
+This file contains some unavoidable boilerplate code. Functions `load_gs` and
+`unload_gs` load and store the settings from the `.conf`, respectively.
+In effect, these are the functions that map the text written in the `.conf`
+with the variables declared in the `struct`. The variable name in the `.conf`
+**does not** need to be the same as the variable name in the struct, but it
+is a good practice to use the same name.
+
+Continuing our example
+
+    void load_gs(void){
+        get_string("Operation","aString",gs->aString);
+        get_double("Operation","anInt",&gs->anInt);
+        get_double("Operation","aDouble",&gs->aDouble);
+        get_matrix("Operation","aMatrix",&gs->aMatrix);
+
+        get_int("Task","Priority",&gs->task_prio);
+    }
+    void unload_gs(void){
+        store_string("Operation", "aString", gs->aString);
+        store_double("Operation", "anInt", gs->anInt);
+        store_double("Operation", "aDouble", gs->aDouble);
+        store_matrix("Operation","aMatrix",&gs->aMatrix);
+
+        store_int("Task","Priority",gs->task_prio);
+    }
+
+#### example\_block\_settings\_proj/example\_block\_settings\_proj/mainwindow.cpp
+
+Finally, we need a GUI to edit them. The `setSettings` member of the `MainWindow`
+class contains all the different settings.
+
+The only detail that may **not** work as expected is the string. A 
+string setting is presented in the GUI as a combo box, **not** as a text entry.
+You don't write a string with the keyboard, you **select** it from a list. 
+
+The `signal_generator` block uses this setting to allow a user to choose
+between different types of waves. A block that outputs to a serial port might
+use a string to allow the user to choose between `/dev/ttyUSB0` or `/dev/ttyUSB1`.
+
+Continuing with our example
+
+    void MainWindow::setSettings()
+    {
+    newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->wave);
+    newEntry("anInt:",&gs->anInt);
+    newEntry("aDouble:",&gs->aDouble);
+    newEntry("aMatrix:",&gs->aMatrix);
+    }
+
+
+### Using libraries
+
+Using a library involves creating two files and editing a makefile. If the 
+block you're programming is very simple, then using a library is overkill.
+As a general rule of thumb though, decoupling the block code from its 
+functionality is considered a good practice because
+
+ * If the block API changes, your interface may need to change, but your functionality code remains unaltered.
+ * The block code follows a strict standard and messing with it can generate unexpected bugs. Decoupling assures that the block is almost _always_ innocent and bugs can be localized to your own library.
+ * A group of blocks can and sometimes _should_ use the same library. This avoids duplication of common code and centralization can greatly increase legibility in some cases, e.g. hardware I/O blocks, control alghorithms,etc.
+
+Here's an example. If you intend to program a block that adds a DC offset
+to incoming signals, creating a library is overkill. If you intend to program
+high-pass, low-pass and band-pass block filters, then you should create
+a library with 3 functions and have each individual block call one of them.
+
+To make your custom block use a .h/.c couple is a matter of altering its
+makefile. The recommended way is to leave your .h/.c library in
+`~/.xenomailab/include` and add it to the `DEP` variable in the Makefile.
+
+Using the `example_block` introduced in the last section, we should edit
+`~/.xenomailab/blocks/example\_block/Makefile` to use an `example_library`
+
+    DEP=template.c template_settings.c $(INCLUDE)rt_block_io.c $(INCLUDE)settings.c $(INCLUDE)strmap.c $(INCLUDE)mtrx.c $(INCLUDE)example_library.c
+
+
 
 Appendix
 --------
