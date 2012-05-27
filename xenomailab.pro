@@ -92,8 +92,8 @@ pixmap.files += data/pixmap/*
 pixmap.path = /usr/share/pixmaps/
 INSTALLS += pixmap
 
-homefolder.files += data/xenomailab/*
-homefolder.path = $$(HOME)/.xenomailab/
+homefolder.files += data/.xenomailab
+homefolder.path = $$(HOME)
 INSTALLS += homefolder
 
 #unix:configfiles.extra = chmod +x data/config/WallpaperChanger/Scripts/*; make clean; mv -f wallch-1 wallch
