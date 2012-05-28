@@ -49,7 +49,8 @@ static struct argp_option options[] = {
         {"output",   'o', "OUTPUTS", 0,
         "Comma separated list of output queues", 0},
         {"output-pipes",   'p', "OUTPUTPIPES", 0,
-        "Comma separated list of non real-time output pipes", 0}
+        "Comma separated list of non real-time output pipes", 0},
+	{ 0,0,0,0,0,0 }
 };
 
 /* Used by main to communicate with parse_opt. */
