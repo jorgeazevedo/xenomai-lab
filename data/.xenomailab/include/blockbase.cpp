@@ -211,7 +211,7 @@ void BlockBase::newComboBox(const QString& text, const QStringList& options,
 void BlockBase::newMatrix(const QString& text, Matrix* M1)
 {
     SettingsLock lock;
-    char buf[50];
+    char buf[CHAR_BUFFER_SIZE];
     matrix_string(M1,buf);
 
     QLineEdit* lineEdit = new QLineEdit(this);
@@ -264,7 +264,7 @@ void BlockBase::lineEditChange(QString text)
     QLineEdit* origin = qobject_cast<QLineEdit *>(sender());
 
     Matrix M1;
-    char buf[50];
+    char buf[CHAR_BUFFER_SIZE];
     sprintf(buf,"%s",text.toStdString().c_str());
 
     //returns 1 on error
