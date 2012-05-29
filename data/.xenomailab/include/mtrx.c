@@ -174,7 +174,7 @@ void matrix_string(Matrix *M1, char* str){
 		//print every number in the row except last one
 		for(k=0;k<M1->columns-1;k++){
 			//print number
-			sprintf(str,"%12.6f",M1->matrix[j][k]);
+			sprintf(str,"%1.3f",M1->matrix[j][k]);
 			str+=strlen(str);
 			//print space
 			*str=' ';
@@ -183,7 +183,7 @@ void matrix_string(Matrix *M1, char* str){
 
 		//print last number in the row and ';' if
 		//we still have rows to go, otherwise ']\0'
-		sprintf(str,"%12.6f",M1->matrix[j][k]);
+		sprintf(str,"%1.3f",M1->matrix[j][k]);
 		str+=strlen(str);
 		
 		//if this isn't the last row
