@@ -93,7 +93,7 @@ Matrix new_matrix2(char *str) {
 
 /**
  * Checks if str conforms to Matrix syntax
- * Rules: Begins with '[', ends with ']'
+ * Rules: '[' is first non-whitespace character, ']' is last
  *        Only contains the following list of chars between brackets
  *        * 0-9
  *        * -
