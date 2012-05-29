@@ -66,22 +66,22 @@ int matrix_is_valid(char *str){
 	return 1;
 }
 
-/**
- * Returns a Matrix initialized to the str description.
- * Supported formats:
- *       [1 0;0 1]
- *       [1,0;0,1]
+/*
+ * Initializes M1 to matrix described in string.
+ * Returns 0 on sucess, otherwise on failure.
+ * Error codes:
+ *             1 - Syntax error.
+ *             2 - Oversized matrix (see mtrx.h).
+ *             3 - Dimension mismatch.
  */
 
-Matrix new_matrix(char *str){
+int new_matrix_safe(Matrix* M1,char *str) {
 	Matrix aux = empty_matrix(Rmax, Cmax);
 	int j=0,k=0,n=0;
 	double temp;
-	printf("************************************************\n");
-	printf("str!%s\n",str);
 
 	if(!matrix_is_valid(str))
-		fprintf(stderr,"Matrix:Invalid matrix in string!\n"),exit(1);
+		return 1;
 
 	while(*str!=']' && *str!='\0') {
 	
@@ -92,14 +92,14 @@ Matrix new_matrix(char *str){
 
 			str++;
 		} else {
-			//stop! we found a number. process it
-			printf("str!%s",str);
-			//temp=atof(str);
+			//stop! we found a number.
+
+			//Are we out of bounds?
 			if((k>=Cmax)||(j>=Rmax))
-				fprintf(stderr,"Matrix:Out of bounds! (Max size is %dx%d)\n",Rmax,Cmax),exit(1);
-				
+				return 2;
+		
+			//store it
 			aux.matrix[j][k] = atof(str);
-			printf(" (%d,%d)%4.2f\n",j,k,aux.matrix[j][k]);//aux.matrix[j][k]=NUM,aux.rows=j,aux.rows=k;
 			k++,n++;
 
 			//skip number
@@ -107,16 +107,30 @@ Matrix new_matrix(char *str){
 				str++;
 		}
 	}
-	printf("************************************************\n");
-
-	printf("N-%d\n",n);
-	printf("j-%d,k-%d, ~N-%d\n",j,k,(j+1)*k);
 
 	if((j+1)*k != n)
-		fprintf(stderr,"Matrix:Dimension Missmatch!\n"),exit(1);
+		return 3;
 
 	aux.rows=j+1;
 	aux.columns=k;
+
+	return 0;
+}
+
+/**
+ * Returns a Matrix initialized to the str description.
+ *
+ * This is a more direct wrapper for new_matrix_safe().
+ * Supported formats:
+ *       [1 0;0 1]
+ *       [1,0;0,1]
+ */
+
+Matrix new_matrix(char *str){
+	Matrix aux = empty_matrix(Rmax, Cmax);
+
+	if(new_matrix_safe(&aux,str))
+		fprintf(stderr,"Matrix:Invalid string!\n"),exit(1);
 
 	return aux;
 }
