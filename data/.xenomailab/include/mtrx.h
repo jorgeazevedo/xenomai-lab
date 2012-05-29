@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MTRX2_H
-#define	MTRX2_H
+#ifndef MTRX_H
+#define	MTRX_H
 
 #define Rmax 4
 #define Cmax 4
