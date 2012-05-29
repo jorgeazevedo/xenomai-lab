@@ -89,11 +89,61 @@ Matrix new_matrix2(char *str) {
     return aux;
 }
 
+/**
+ * Returns a Matrix initialized to the str description.
+ * Supported formats:
+ *       [1 0;0 1]
+ *       [1,0;0,1]
+ */
 
-Matrix new_matrix(char *str) {
-    Matrix aux = empty_matrix(Rmax, Cmax);
-    int i=0, j=0, num=0;
+Matrix new_matrix(char *str)
+{
+	int j=0,k=0,n=0;
+	double temp;
+	printf("************************************************\n");
+	printf("str!%s\n",str);
+
+	//Enforce grammar:
+	//*str=[, "str[strlen]=]" or whatever
+	// '[','0'-'9','-','.',' ',',' ';',']'
+	//
+	// if(!is_valid_matrix(str)
+	//	return 0;
+
+	while(*str!=']' && *str!='\0') {
+	
+		//if not a number, travel to next number
+		if((*str<'0'||*str>'9') && (*str!='-')){
+			if(*str==';')
+				j++,k=0;
+
+			str++;
+		} else {
+			//stop! we found a number. process it
+			printf("str!%s",str);
+			temp=atof(str);
+			printf(" (%d,%d)%4.2f\n",j,k,temp);//aux.matrix[j][k]=NUM,aux.rows=j,aux.rows=k;
+			k++,n++;
+
+			//skip number
+			while((*str>='0'&&*str<='9') || (*str=='-') || (*str == '.') )
+				str++;
+		}
+	}
+	printf("************************************************\n");
+
+	printf("N-%d\n",n);
+	printf("j-%d,k-%d, ~N-%d\n",j,k,(j+1)*k);
+
+	//TODO: Dimension missmatch
+	//if((j+1)*k != n)
+	// return 0;
+
+	return matrix_eye(2,4);
+    
+Matrix aux = empty_matrix(Rmax, Cmax);
     char* newStr;
+	int i=0,num=0;
 
     //TODO:
     //don't use malloc, use a char vector
