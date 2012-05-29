@@ -57,6 +57,10 @@
         #define	DEBUG(...)
 #endif
 
+#define CHAR_BUFFER_SIZE 300
+#define QUEUE_SIZE 256
+#define MAX_MESSAGE_LENGTH 1
+
 #ifdef __cplusplus
 extern "C"
 {

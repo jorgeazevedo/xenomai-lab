@@ -18,10 +18,6 @@
 
 #include "rt_block_io.h"
 
-#define QUEUE_SIZE 256
-#define MAX_MESSAGE_LENGTH 1
-#define CHAR_BUFFER_SIZE 300
-
 //void test(void);
 
 int running=1;
