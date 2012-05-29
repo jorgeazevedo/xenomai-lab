@@ -29,8 +29,8 @@ extern "C" {
 #endif
 
 typedef struct {
-    unsigned char rows;
-    unsigned char columns;
+    unsigned short rows;
+    unsigned short columns;
     double matrix[Rmax][Cmax];
 }Matrix;
 
