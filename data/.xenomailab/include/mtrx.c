@@ -23,7 +23,7 @@ int strlen(char* str);
 
 /**
  * Initializes M1 to matrix described in string.
- * Returns 0 on sucess, otherwise on failure.
+ * Returns 0 on sucess, 1 on error.
  */
 
 int new_matrix_safe(Matrix* M1,char *str) {
