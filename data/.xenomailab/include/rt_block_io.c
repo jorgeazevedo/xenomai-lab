@@ -560,13 +560,10 @@ int register_mutex(RT_MUTEX* mut, char* name){
                         break;
                 case -EEXIST:
                         DEBUG("EEXIST: Failed to create mutex, \n");
-                        if(rt_mutex_bind(mut,name,TM_INFINITE)){
+                        if(rt_mutex_bind(mut,name,TM_INFINITE))
                                 RETERROR("binding to %s failed\n",name);
-                        }
-                        else{
-                                DEBUG("bind succeed\n");
-                        }
 
+			DEBUG("bind succeed\n");
                         break;
                 case -EPERM:
                         RETERROR("EPERM: Invalid context for calling mutex\n");
@@ -802,16 +799,14 @@ int load_settings(char * config_file,size_t size){
 	//Open configuration file
         sprintf(buf,"%s%s%s%s",getenv("HOME"),"/.xenomailab/workspace/",config_file,".conf");
         f=fopen(buf, "r");
-        if (f==NULL){
+        if (f==NULL)
                 RETERROR("Failed to open %s for read!\n",buf);
-        }
 
 	//Open Settings* settings based on this file, and close file
         settings = settings_open(f);
         fclose(f);
-        if (settings==NULL){
+        if (settings==NULL)
                 RETERROR("Failed to open settings!\n");
-        }
 
 
 	//Heap name can't have /. So Untitled/sig_gen
@@ -836,9 +831,8 @@ int load_settings(char * config_file,size_t size){
 	i++;
 	buf[i]='\0';
 
-        if(register_mutex(&gs_mtx,buf)){
+        if(register_mutex(&gs_mtx,buf))
             RETERROR("register_mutex has failed");
-        }
 
 	//We either created a shm, or binded.
 	//If we created, gs is empty and we need to load it
@@ -861,9 +855,8 @@ int update_settings(char* config_file){
 	sprintf(buf,"%s%s%s%s",getenv("HOME"),"/.xenomailab/workspace/",config_file,".conf");
         DEBUG("going to open file %s for write\n",buf);
 	f = fopen(buf, "w");
-	if (f == NULL) {
+	if (f == NULL)
             RETERROR("failed to open %s for write!\n",buf);
-	}
 
 	settings_lock(&gs_mtx);
 	
@@ -871,9 +864,8 @@ int update_settings(char* config_file){
 
 	settings_unlock(&gs_mtx);
 
-        if(!settings_save(settings, f)){
+        if(!settings_save(settings, f))
             RETERROR("did not save settings!\n");
-        }
 
 	fclose(f);
 	
@@ -900,9 +892,8 @@ int am_alone(char* heap_name){
 int save_settings(char* config_file){
 	int noWarning;
 
-        if(update_settings(config_file)){
+        if(update_settings(config_file))
             RETERROR("update_settings has failed\n");
-        }
 
         settings_delete(settings);
 
