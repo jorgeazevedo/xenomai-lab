@@ -270,24 +270,8 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 
                         	sprintf(buf,"%s", original_string);
 				//DEBUG("-%d->%s\n",i,buf);
-				//mat_vector[0][i]=new_matrix(buf);
-				int err=new_matrix_safe(&mat_vector[0][i],buf);
-				switch(err) {
-					case 0:
-						break;
-					case 1:
-						ERROR("new_matrix_safe: syntax error (%s)\n",buf);
-						break;
-					case 2:
-						ERROR("new_matrix_safe: oversized matrix (%s)\n",buf);
-						break;
-					case 3:
-						ERROR("new_matrix_safe: dimension mismatch (%s)\n",buf);
-						break;
-					default:
-						ERROR("new_matrix_safe exited with unknown error (%s)\n",buf);
-						break;
-				}
+				if(new_matrix_safe(&mat_vector[0][i],buf))
+					ERROR("Failed to parse given matrix\n");
 				
 				//discard copied string
 				original_string+=strlen+1;
@@ -699,23 +683,8 @@ void get_matrix(char* section, char* key, Matrix* M1){
 	get_string(section,key,buf);
 	
 	//*M1=new_matrix(buf);
-	int err=new_matrix_safe(M1,buf);
-	switch(err) {
-		case 0:
-			break;
-		case 1:
-			ERROR("new_matrix_safe: syntax error (%s)\n",buf);
-			break;
-		case 2:
-			ERROR("new_matrix_safe: oversized matrix (%s)\n",buf);
-			break;
-		case 3:
-			ERROR("new_matrix_safe: dimension mismatch (%s)\n",buf);
-			break;
-		default:
-			ERROR("new_matrix_safe exited with unknown error (%s)\n",buf);
-			break;
-	}
+	if(new_matrix_safe(M1,buf))
+		ERROR("Failed to parse matrix %s from [%s]\n",key,section);
 }
 
 void store_matrix(char* section, char* key, Matrix* M1){
