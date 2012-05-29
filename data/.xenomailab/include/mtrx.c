@@ -514,25 +514,11 @@ void matrix_string(Matrix *M1, char* str){
  */
 
 void matrix_print(Matrix *M1){
-	int j,k;
+        char buf[200];
 
-	printf("|\t");
-	for(j=0;j < M1->rows;j++){
-		for(k=0;k<M1->columns;k++){
+        matrix_string(M1,buf);
+        printf("%s\n",buf);
 
-			printf("%4.2f",M1->matrix[j][k]);
-
-
-			if(k!=(M1->columns-1))
-				printf("\t");
-			else{
-				if(j!=(M1->rows-1))
-					printf("; ");
-				else
-					printf("|");
-			}
-		}
-	}
-	printf("\n");
-		
+        return;
 }
+
