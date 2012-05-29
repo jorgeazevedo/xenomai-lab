@@ -17,8 +17,6 @@
  */
 
 #include "mtrx.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 Matrix new_matrix2(char *str) {
     Matrix aux = empty_matrix(Rmax, Cmax);

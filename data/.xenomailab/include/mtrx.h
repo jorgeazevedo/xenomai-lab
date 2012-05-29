@@ -19,6 +19,8 @@
 #ifndef MTRX_H
 #define	MTRX_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #define Rmax 4
 #define Cmax 4
 
