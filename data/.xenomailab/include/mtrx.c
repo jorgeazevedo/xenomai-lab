@@ -419,52 +419,44 @@ int strlen(char* str){
 	return i;
 }
 
-/*
- * Writes M1 to str. Could use some work
+/**
+ * Writes M1 to str.
+ *
  */
 void matrix_string(Matrix *M1, char* str){
 	int j,k;
-	//
-	//[x
-	//x is used to void string termination
+
 	*str='[';
 	str++;
-	*str='x';
-
+	
 	//for every row
-	for(j=0;j < M1->rows;j++){
-		//and every column
-		for(k=0;k<M1->columns;k++){
-			//write number into string and advance pointer
-			//overwrite '\0' with 'x' so sprintf works properly
-                        sprintf(str,"%12.6f",M1->matrix[j][k]);
+	for(j=0;j<M1->rows;j++){
+		//print every number in the row except last one
+		for(k=0;k<M1->columns-1;k++){
+			//print number
+			sprintf(str,"%12.6f",M1->matrix[j][k]);
 			str+=strlen(str);
-			*str='x';
+			//print space
+			*str=' ';
+			str++;
+		}
 
-			//if this isn't the last column
-			if(k!=(M1->columns-1)){
-				//write a space to string and adva...
-				sprintf(str," ");
-				str+=strlen(str);
-				*str='x';
-			}
-			else{
-				//if we still have rows to run
-				if(j!=(M1->rows-1)){
-					//write ;
-					sprintf(str,"; ");
-					str+=strlen(str);
-					*str='x';
-				}
-				else{
-					//terminate the string and call it a day
-					sprintf(str,"]");
-					str+=strlen(str);
-				}
-			}
+		//print last number in the row and ';' if
+		//we still have rows to go, otherwise ']\0'
+		sprintf(str,"%12.6f",M1->matrix[j][k]);
+		str+=strlen(str);
+		
+		//if this isn't the last row
+		if(j<M1->rows-1){
+			*str=';';
+			str++;
+		} else {
+			//close brackets and close string
+			*str=']';
+			str++;
+			*str='\0';
 		}
 	}
-
 	return;
 }
 
