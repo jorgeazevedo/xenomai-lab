@@ -113,6 +113,11 @@ int matrix_is_valid(char *str){
 
 	end = str + size -1;
 
+	while(*str==' ')
+		str++;
+	while(*end==' ')
+		end--;
+
 	if(*end != ']')
 		return 0;
 	if(*str != '[')
