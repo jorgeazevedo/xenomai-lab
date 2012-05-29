@@ -32,7 +32,6 @@ int strlen(char* str);
 int new_matrix_safe(Matrix* M1,char *str) {
 	Matrix aux = empty_matrix(RMAX, CMAX);
 	int j=0,k=0,n=0;
-	double temp;
 
 	if(!matrix_is_valid(str))
 		return 1;
@@ -67,6 +66,8 @@ int new_matrix_safe(Matrix* M1,char *str) {
 
 	aux.rows=j+1;
 	aux.columns=k;
+
+	*M1=aux;
 
 	return 0;
 }
