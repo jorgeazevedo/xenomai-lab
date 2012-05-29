@@ -34,6 +34,7 @@ struct global_settings{
 	char aString[40];
 	int anInt;
 	double aDouble;
+	Matrix aMatrix;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
 };

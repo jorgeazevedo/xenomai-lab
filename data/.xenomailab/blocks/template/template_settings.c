@@ -33,6 +33,7 @@ void load_gs(void){
 	get_string("Operation","aString",gs->aString);
 	get_int("Operation","anInt",&gs->anInt);
 	get_double("Operation","aDouble",&gs->aDouble);
+	get_matrix("Operation","aMatrix",&gs->aMatrix);
 
 	get_int("Task","Priority",&gs->task_prio);
 }
@@ -49,6 +50,7 @@ void unload_gs(void){
 	store_string("Operation", "aString", gs->aString);
 	store_int("Operation", "anInt", gs->anInt);
 	store_double("Operation", "aDouble", gs->aDouble);
+	store_matrix("Operation","aMatrix",&gs->aMatrix);
 
 	store_int("Task","Priority",gs->task_prio);
 }

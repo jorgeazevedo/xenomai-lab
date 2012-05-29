@@ -59,6 +59,7 @@ void MainWindow::setSettings()
     newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
     newEntry("anInt:",&gs->anInt);
     newEntry("aDouble:",&gs->aDouble);
+    newMatrix("aMatrix:",&gs->aMatrix);
 }
 
 
