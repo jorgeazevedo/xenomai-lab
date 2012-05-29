@@ -20,6 +20,7 @@
 
 #define QUEUE_SIZE 256
 #define MAX_MESSAGE_LENGTH 1
+#define CHAR_BUFFER_SIZE 300
 
 //void test(void);
 
@@ -216,7 +217,7 @@ void* safe_malloc(int bytes){
 
 int parse_string(char* original_string, short* num, char***string_vector, Matrix** mat_vector){
 	int i,strlen,value=0;
-	char buf[50];
+	char buf[CHAR_BUFFER_SIZE];
 
         if(original_string[0] == '\0'){
                 *num=0;
@@ -269,7 +270,24 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 
                         	sprintf(buf,"%s", original_string);
 				//DEBUG("-%d->%s\n",i,buf);
-				mat_vector[0][i]=new_matrix(buf);
+				//mat_vector[0][i]=new_matrix(buf);
+				int err=new_matrix_safe(&mat_vector[0][i],buf);
+				switch(err) {
+					case 0:
+						break;
+					case 1:
+						ERROR("new_matrix_safe: syntax error (%s)\n",buf);
+						break;
+					case 2:
+						ERROR("new_matrix_safe: oversized matrix (%s)\n",buf);
+						break;
+					case 3:
+						ERROR("new_matrix_safe: dimension mismatch (%s)\n",buf);
+						break;
+					default:
+						ERROR("new_matrix_safe exited with unknown error (%s)\n",buf);
+						break;
+				}
 				
 				//discard copied string
 				original_string+=strlen+1;
@@ -288,7 +306,7 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 void parse_args(int argc, char* argv[]){
         struct arguments arguments;
         int i,strlen=0;
-	char buf[100];
+	char buf[CHAR_BUFFER_SIZE];
 
         /* Default values. */
         arguments.input_queues = "";
@@ -622,7 +640,7 @@ void delete_shm(RT_HEAP* heap,void *pointer){
 void* bind_shm(RT_HEAP* heap, char* heap_name,size_t size){
 	void* pointer;
 	int error=0;
-	char buf[100];
+	char buf[CHAR_BUFFER_SIZE];
 	int i;
 
 	for(i=0;*heap_name!='\0';i++,heap_name++){
@@ -676,15 +694,32 @@ void unbind_shm(RT_HEAP* heap, void* pointer){
 }
 */
 void get_matrix(char* section, char* key, Matrix* M1){
-        char buf[50];
+        char buf[CHAR_BUFFER_SIZE];
 
 	get_string(section,key,buf);
-
-	*M1=new_matrix(buf);
+	
+	//*M1=new_matrix(buf);
+	int err=new_matrix_safe(M1,buf);
+	switch(err) {
+		case 0:
+			break;
+		case 1:
+			ERROR("new_matrix_safe: syntax error (%s)\n",buf);
+			break;
+		case 2:
+			ERROR("new_matrix_safe: oversized matrix (%s)\n",buf);
+			break;
+		case 3:
+			ERROR("new_matrix_safe: dimension mismatch (%s)\n",buf);
+			break;
+		default:
+			ERROR("new_matrix_safe exited with unknown error (%s)\n",buf);
+			break;
+	}
 }
 
 void store_matrix(char* section, char* key, Matrix* M1){
-	char buf[50];
+	char buf[CHAR_BUFFER_SIZE];
 
 	
 	matrix_string(M1,buf);
@@ -694,7 +729,7 @@ void store_matrix(char* section, char* key, Matrix* M1){
 }
 
 void get_string(char* section, char* key, char* str){
-        char buf[50];
+        char buf[CHAR_BUFFER_SIZE];
 
         if(!settings_get(settings,section,key,buf,sizeof(buf)))
                 DEBUG("Did not find %s!\n",key);
@@ -707,7 +742,7 @@ void store_string(char* section, char* key, char* str){
 }
 
 void get_double(char* section, char* key, double* value){
-        char buf[25];
+        char buf[CHAR_BUFFER_SIZE];
 
         if(!settings_get(settings,section,key,buf,sizeof(buf)))
                 DEBUG("Did not find %s!\n",key);
@@ -716,14 +751,14 @@ void get_double(char* section, char* key, double* value){
 }
 
 void store_double(char* section, char* key, double value){
-        char buf[25];
+        char buf[CHAR_BUFFER_SIZE];
 
         sprintf(buf,"%4.2f",value);
         settings_set(settings, section, key, buf);
 }
 
 void get_int(char* section, char* key, int* value){
-        char buf[25];
+        char buf[CHAR_BUFFER_SIZE];
 
         if(!settings_get(settings,section,key,buf,sizeof(buf)))
                 DEBUG("Did not find %s!\n",key);
@@ -732,7 +767,7 @@ void get_int(char* section, char* key, int* value){
 }
 
 void store_int(char* section, char* key, int value){
-        char buf[25];
+        char buf[CHAR_BUFFER_SIZE];
 
         sprintf(buf,"%d",value);
         settings_set(settings, section, key, buf);
@@ -791,7 +826,7 @@ void settings_unlock(RT_MUTEX* mtx){
 
 int load_settings(char * config_file,size_t size){
         FILE *f;
-        char buf[100];
+        char buf[CHAR_BUFFER_SIZE];
 	int i=0;
 
 	DEBUG("config_file is %s\n",config_file);
@@ -852,7 +887,7 @@ int load_settings(char * config_file,size_t size){
 
 int update_settings(char* config_file){
 	FILE *f;
-	char buf[100];
+	char buf[CHAR_BUFFER_SIZE];
 
 	sprintf(buf,"%s%s%s%s",getenv("HOME"),"/.xenomailab/workspace/",config_file,".conf");
         DEBUG("going to open file %s for write\n",buf);
@@ -879,7 +914,7 @@ int update_settings(char* config_file){
 int am_alone(char* heap_name){
         int num=0,num1=0,num2=0,noWarning;;
 	FILE* fd;
-	char buf[100];
+	char buf[CHAR_BUFFER_SIZE];
 
 	sprintf(buf,"/proc/xenomai/registry/native/heaps/%s",heap_name);
 
