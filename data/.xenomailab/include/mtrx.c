@@ -30,8 +30,8 @@ int new_matrix_safe(Matrix* M1,char *str) {
 	Matrix aux = empty_matrix(RMAX, CMAX);
 	int j=0,k=0,n=0;
 
-	if(!matrix_is_valid(str))
-		RETERROR("Matrix %s has a syntax error!\n",str);
+	if(matrix_is_invalid(str))
+		RETERROR("Matrix\n%s\nhas a syntax error!\n",str);
 
 	while(*str!=']' && *str!='\0') {
 	
@@ -88,7 +88,7 @@ Matrix new_matrix(char *str){
 }
 
 /**
- * Checks if str conforms to Matrix syntax
+ * Checks if str does not conform to Matrix syntax
  * Rules: '[' is first non-whitespace character, ']' is last
  *        Only contains the following list of chars between brackets
  *        * 0-9
@@ -98,14 +98,14 @@ Matrix new_matrix(char *str){
  *        * whitespace
  *        * ;
  */
-int matrix_is_valid(char *str){
+int matrix_is_invalid(char *str){
 	int size=0;
 	char* end;
 	
 	size = strlen(str);
 	
 	if(!size)
-		return 0;
+		RETERROR("Size is %d!\n",size);
 
 	end = str + size -1;
 
@@ -115,9 +115,9 @@ int matrix_is_valid(char *str){
 		end--;
 
 	if(*end != ']')
-		return 0;
+		RETERROR("No terminating ]!\n");
 	if(*str != '[')
-		return 0;
+		RETERROR("No opening [!\n");
 
 	str++;
 	while(str < end){
@@ -126,11 +126,11 @@ int matrix_is_valid(char *str){
 			(*str == ' ') || (*str == ';') ){
 			str++;
 		} else {
-			return 0;
+			RETERROR("Invalid char: %c\n",*str);
 		}
 	}
 
-	return 1;
+	return 0;
 }
 
 Matrix empty_matrix(int rows, int col) {
