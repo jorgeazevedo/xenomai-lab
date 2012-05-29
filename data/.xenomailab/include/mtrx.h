@@ -34,19 +34,23 @@ typedef struct {
     double matrix[Rmax][Cmax];
 }Matrix;
 
+//Matrix type operations
 Matrix new_matrix(char *str);
 int new_matrix_safe(Matrix*, char *str);
 Matrix empty_matrix(int rows,int col);
+Matrix matrix_eye(unsigned char dim, double value);
+void matrix_string(Matrix *M1, char* str);
+void matrix_print(Matrix * M1);
+
+//Math operations
 Matrix matrix_mul(Matrix *M1, Matrix *M2);
 Matrix matrix_mul_double(Matrix *M1, double num);
 Matrix matrix_tran(Matrix *Msrc);
 double matrix_det(Matrix *Msrc);
 Matrix matrix_inv(Matrix *Msrc);
-Matrix matrix_eye(unsigned char dim, double value);
 Matrix matrix_sum(Matrix *M1, Matrix *M2);
 Matrix matrix_sub(Matrix *M1, Matrix *M2);
-void matrix_string(Matrix *M1, char* str);
-void matrix_print(Matrix * M1);
+
 
 
 #ifdef	__cplusplus
