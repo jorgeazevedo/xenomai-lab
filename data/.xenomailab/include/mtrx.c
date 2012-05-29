@@ -18,15 +18,12 @@
 
 #include "mtrx.h"
 
+///This function is not part of the public API
 int strlen(char* str);
 
-/*
+/**
  * Initializes M1 to matrix described in string.
  * Returns 0 on sucess, otherwise on failure.
- * Error codes:
- *             1 - Syntax error.
- *             2 - Oversized matrix (see mtrx.h).
- *             3 - Dimension mismatch.
  */
 
 int new_matrix_safe(Matrix* M1,char *str) {
@@ -34,7 +31,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 	int j=0,k=0,n=0;
 
 	if(!matrix_is_valid(str))
-		return 1;
+		RETERROR("Matrix %s has a syntax error!\n",str);
 
 	while(*str!=']' && *str!='\0') {
 	
@@ -49,7 +46,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 
 			//Are we out of bounds?
 			if((k>=CMAX)||(j>=RMAX))
-				return 2;
+				RETERROR("Matrix %s exceedes max dim %dx%d!\n",str,CMAX,RMAX);
 		
 			//store it
 			aux.matrix[j][k] = atof(str);
@@ -62,7 +59,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 	}
 
 	if((j+1)*k != n)
-		return 3;
+		RETERROR("Matrix %s dimension mismatch!\n",str);
 
 	aux.rows=j+1;
 	aux.columns=k;
@@ -85,7 +82,7 @@ Matrix new_matrix(char *str){
 	Matrix aux = empty_matrix(RMAX, CMAX);
 
 	if(new_matrix_safe(&aux,str))
-		fprintf(stderr,"Matrix:Invalid string!\n"),exit(1);
+		ERROR("The given string is invalid %s",str)
 
 	return aux;
 }
@@ -216,7 +213,7 @@ void matrix_print(Matrix *M1){
         return;
 }
 
-
+//TODO: matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *res)
 Matrix matrix_mul(Matrix *M1, Matrix *M2) {
     if (M1->columns != M2->rows) {
         printf("matrix_mul: Dimensions mismatch");
@@ -309,6 +306,7 @@ double matrix_det(Matrix *Msrc) {
     return aux;
 }
 
+//TODO: matrix_inv_safe
 Matrix matrix_inv(Matrix *Msrc) {
     int i, j, m, n, x, y;
     double det;
