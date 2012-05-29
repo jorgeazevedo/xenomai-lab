@@ -20,77 +20,6 @@
 
 int strlen(char* str);
 
-Matrix new_matrix2(char *str) {
-    Matrix aux = empty_matrix(Rmax, Cmax);
-    double temp = 0;
-    int signal=1;
-    int i = 1;
-    int dec = 1;
-    int col = 0;
-    int row = 0;
-    int num = 0;
-    while (str[i] != ']') {
-        if (str[i] == '\0') {
-            printf("\n NEW_MATRIX : Invalid Input (Missing bracket ']')");
-            fflush(stdout);
-            exit(1);
-        }
-        dec = 1;
-        temp = 0;
-        //printf("\n 0| %d |", i);
-        signal=1;
-        if(str[i]=='-'){
-            signal=-1;
-            i++;
-        }
-        while ((str[i] >= '0') && (str[i] <= '9')) {
-            // printf("\n 1| %d |", i);
-            aux.matrix[row][col] = 10 * (aux.matrix[row][col]) + str[i] - '0';
-            i++;
-        }
-        
-        if (str[i] == '.') {
-            //printf("\n 3| %d |", i);
-            i++;
-            while ((str[i] >= '0') && (str[i] <= '9')) {
-                // printf("\n 4| %d |", i);
-                temp = 10 * temp + str[i] - '0';
-                dec = 10 * dec;
-                i++;
-            }
-            aux.matrix[row][col] += (temp / dec);
-        }
-        aux.matrix[row][col]=signal*aux.matrix[row][col];
-        if (str[i] == ';') {
-            //printf("\n 5| %d |", i);
-            num++;
-            row++;
-            col = 0;
-            i++;
-        }
-        if (str[i] == ' ' || str[i] == ',') {
-            if (str[i - 1] == ' ' || str[i - 1] == ',') {
-                printf("\n NEW_MATRIX : Invalid Input %s (%c%c)", str,str[i - 1], str[i]);
-                fflush(stdout);
-                exit(1);
-            }
-            //printf("\n 6| %d |", i);
-            num++;
-            col++;
-            i++;
-        }
-    }
-    num++;
-    aux.rows = row + 1;
-    aux.columns = col + 1;
-    if ((aux.rows * aux.columns) != num) {
-        printf("\n NEW_MATRIX : Invalid Input (Number of values = %d | dimension = %dx%d )", num, aux.rows, aux.columns);
-        fflush(stdout);
-        exit(1);
-    }
-    return aux;
-}
-
 /**
  * Checks if str conforms to Matrix syntax
  * Rules: '[' is first non-whitespace character, ']' is last
@@ -145,17 +74,14 @@ int matrix_is_valid(char *str){
  */
 
 Matrix new_matrix(char *str){
+	Matrix aux = empty_matrix(Rmax, Cmax);
 	int j=0,k=0,n=0;
 	double temp;
 	printf("************************************************\n");
 	printf("str!%s\n",str);
 
-	//Enforce grammar:
-	//*str=[, "str[strlen]=]" or whatever
-	// '[','0'-'9','-','.',' ',',' ';',']'
-	//
-	// if(!is_valid_matrix(str)
-	//	return 0;
+	if(!matrix_is_valid(str))
+		fprintf(stderr,"Matrix:Invalid matrix in string!\n"),exit(1);
 
 	while(*str!=']' && *str!='\0') {
 	
@@ -168,8 +94,12 @@ Matrix new_matrix(char *str){
 		} else {
 			//stop! we found a number. process it
 			printf("str!%s",str);
-			temp=atof(str);
-			printf(" (%d,%d)%4.2f\n",j,k,temp);//aux.matrix[j][k]=NUM,aux.rows=j,aux.rows=k;
+			//temp=atof(str);
+			if((k>=Cmax)||(j>=Rmax))
+				fprintf(stderr,"Matrix:Out of bounds! (Max size is %dx%d)\n",Rmax,Cmax),exit(1);
+				
+			aux.matrix[j][k] = atof(str);
+			printf(" (%d,%d)%4.2f\n",j,k,aux.matrix[j][k]);//aux.matrix[j][k]=NUM,aux.rows=j,aux.rows=k;
 			k++,n++;
 
 			//skip number
@@ -182,75 +112,20 @@ Matrix new_matrix(char *str){
 	printf("N-%d\n",n);
 	printf("j-%d,k-%d, ~N-%d\n",j,k,(j+1)*k);
 
-	//TODO: Dimension missmatch
-	//if((j+1)*k != n)
-	// return 0;
+	if((j+1)*k != n)
+		fprintf(stderr,"Matrix:Dimension Missmatch!\n"),exit(1);
 
-	return matrix_eye(2,4);
-    
-Matrix aux = empty_matrix(Rmax, Cmax);
-    char* newStr;
-	int i=0,num=0;
+	aux.rows=j+1;
+	aux.columns=k;
 
-    //TODO:
-    //don't use malloc, use a char vector
-    //and change pointer arithmetic to 
-    //vector index
-    newStr=malloc(255*sizeof(char));
-
-    //Go to first number
-    while((*str<'0'||*str>'9') && (*newStr!='-') )
-	    str++;
-
-    //Make a copy of string, substitute , for ' '
-    for(i=0;str[i]!='\0';i++){
-	    if(str[i]==',')
-                    newStr[i]=' ';
-	    else
-                    newStr[i]=str[i];
-    }
-    newStr[i]='\0';
-
-    //until the end of string
-    for(i=0,j=0,num=0;*newStr!='\0';j++,num++){
-
-    	//get number
-        aux.matrix[i][j]=atof(newStr);
-	
-	//go to next non-number
-        while((*newStr>='0'&&*newStr<='9')||*newStr=='.'||*newStr=='-'){
-                newStr++;
-	}
-
-	//go to next number, check for ; and for \0!
-        while( ( (*newStr<'0') || (*newStr>'9') ) && (*newStr!='-') ){
-                if(*newStr=='\0')
-			break;
-                if(*newStr==';'){
-			j=-1;
-			i++;
-		}
-                newStr++;
-	}
-    }
-
-    aux.rows = i + 1;
-    aux.columns = j;
-    if ((aux.rows * aux.columns) != num) {
-        fprintf(stderr,"\n new_MATRIX : Invalid Input (Number of values = %d | dimension = %dx%d)\n", num, aux.rows, aux.columns);
-        fflush(stdout);
-        exit(1);
-    }
-
-    return aux;
-  
+	return aux;
 }
 
 /*
  * Same as new_matrix, but returns 1 instead
  * of running exit(1);
  */
-int new_matrix_safe(Matrix* M1,char *str) {
+int new_matrix_safe2(Matrix* M1,char *str) {
     Matrix aux = empty_matrix(Rmax, Cmax);
     int i=0, j=0, num=0;
     char* newStr;
@@ -561,7 +436,7 @@ void matrix_string(Matrix *M1, char* str){
  */
 
 void matrix_print(Matrix *M1){
-        char buf[200];
+        char buf[500];
 
         matrix_string(M1,buf);
         printf("%s\n",buf);
