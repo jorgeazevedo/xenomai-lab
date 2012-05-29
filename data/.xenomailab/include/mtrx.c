@@ -76,7 +76,7 @@ int matrix_is_valid(char *str){
  */
 
 int new_matrix_safe(Matrix* M1,char *str) {
-	Matrix aux = empty_matrix(Rmax, Cmax);
+	Matrix aux = empty_matrix(RMAX, CMAX);
 	int j=0,k=0,n=0;
 	double temp;
 
@@ -95,7 +95,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 			//stop! we found a number.
 
 			//Are we out of bounds?
-			if((k>=Cmax)||(j>=Rmax))
+			if((k>=CMAX)||(j>=RMAX))
 				return 2;
 		
 			//store it
@@ -127,7 +127,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
  */
 
 Matrix new_matrix(char *str){
-	Matrix aux = empty_matrix(Rmax, Cmax);
+	Matrix aux = empty_matrix(RMAX, CMAX);
 
 	if(new_matrix_safe(&aux,str))
 		fprintf(stderr,"Matrix:Invalid string!\n"),exit(1);
@@ -140,7 +140,7 @@ Matrix new_matrix(char *str){
  * of running exit(1);
  */
 int new_matrix_safe2(Matrix* M1,char *str) {
-    Matrix aux = empty_matrix(Rmax, Cmax);
+    Matrix aux = empty_matrix(RMAX, CMAX);
     int i=0, j=0, num=0;
     char* newStr;
 
@@ -213,8 +213,8 @@ Matrix empty_matrix(int rows, int col) {
     Matrix aux;
     int i, j;
 
-    for (i = 0; i < Rmax; i++) {
-        for (j = 0; j < Cmax; j++) {
+    for (i = 0; i < RMAX; i++) {
+        for (j = 0; j < CMAX; j++) {
             aux.matrix[i][j] = 0;
         }
     }

@@ -21,8 +21,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#define Rmax 4
-#define Cmax 4
+#define RMAX 4
+#define CMAX 4
 
 #ifdef	__cplusplus
 extern "C" {
@@ -31,7 +31,7 @@ extern "C" {
 typedef struct {
     unsigned short rows;
     unsigned short columns;
-    double matrix[Rmax][Cmax];
+    double matrix[RMAX][CMAX];
 }Matrix;
 
 //Matrix type operations
