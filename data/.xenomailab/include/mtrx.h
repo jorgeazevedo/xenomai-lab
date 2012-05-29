@@ -39,6 +39,7 @@ Matrix new_matrix(char *str);
 int new_matrix_safe(Matrix*, char *str);
 Matrix empty_matrix(int rows,int col);
 Matrix matrix_eye(unsigned char dim, double value);
+int matrix_is_valid(char *str);
 void matrix_string(Matrix *M1, char* str);
 void matrix_print(Matrix * M1);
 

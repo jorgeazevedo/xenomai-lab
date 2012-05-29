@@ -18,6 +18,8 @@
 
 #include "mtrx.h"
 
+int strlen(char* str);
+
 Matrix new_matrix2(char *str) {
     Matrix aux = empty_matrix(Rmax, Cmax);
     double temp = 0;
@@ -90,14 +92,54 @@ Matrix new_matrix2(char *str) {
 }
 
 /**
+ * Checks if str conforms to Matrix syntax
+ * Rules: Begins with '[', ends with ']'
+ *        Only contains the following list of chars between brackets
+ *        * 0-9
+ *        * -
+ *        * .
+ *        * ,
+ *        * whitespace
+ *        * ;
+ */
+int matrix_is_valid(char *str){
+	int size=0;
+	char* end;
+	
+	size = strlen(str);
+	
+	if(!size)
+		return 0;
+
+	end = str + size -1;
+
+	if(*end != ']')
+		return 0;
+	if(*str != '[')
+		return 0;
+
+	str++;
+	while(str < end){
+		if(	(*str>='0'&&*str<='9') || (*str == '-') ||
+			(*str == '.') || (*str == ',') ||
+			(*str == ' ') || (*str == ';') ){
+			str++;
+		} else {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+/**
  * Returns a Matrix initialized to the str description.
  * Supported formats:
  *       [1 0;0 1]
  *       [1,0;0,1]
  */
 
-Matrix new_matrix(char *str)
-{
+Matrix new_matrix(char *str){
 	int j=0,k=0,n=0;
 	double temp;
 	printf("************************************************\n");
