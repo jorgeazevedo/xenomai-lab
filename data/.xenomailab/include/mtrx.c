@@ -20,52 +20,6 @@
 
 int strlen(char* str);
 
-/**
- * Checks if str conforms to Matrix syntax
- * Rules: '[' is first non-whitespace character, ']' is last
- *        Only contains the following list of chars between brackets
- *        * 0-9
- *        * -
- *        * .
- *        * ,
- *        * whitespace
- *        * ;
- */
-int matrix_is_valid(char *str){
-	int size=0;
-	char* end;
-	
-	size = strlen(str);
-	
-	if(!size)
-		return 0;
-
-	end = str + size -1;
-
-	while(*str==' ')
-		str++;
-	while(*end==' ')
-		end--;
-
-	if(*end != ']')
-		return 0;
-	if(*str != '[')
-		return 0;
-
-	str++;
-	while(str < end){
-		if(	(*str>='0'&&*str<='9') || (*str == '-') ||
-			(*str == '.') || (*str == ',') ||
-			(*str == ' ') || (*str == ';') ){
-			str++;
-		} else {
-			return 0;
-		}
-	}
-
-	return 1;
-}
-
 /*
  * Initializes M1 to matrix described in string.
  * Returns 0 on sucess, otherwise on failure.
@@ -135,79 +89,51 @@ Matrix new_matrix(char *str){
 	return aux;
 }
 
-/*
- * Same as new_matrix, but returns 1 instead
- * of running exit(1);
+/**
+ * Checks if str conforms to Matrix syntax
+ * Rules: '[' is first non-whitespace character, ']' is last
+ *        Only contains the following list of chars between brackets
+ *        * 0-9
+ *        * -
+ *        * .
+ *        * ,
+ *        * whitespace
+ *        * ;
  */
-int new_matrix_safe2(Matrix* M1,char *str) {
-    Matrix aux = empty_matrix(RMAX, CMAX);
-    int i=0, j=0, num=0;
-    char* newStr;
+int matrix_is_valid(char *str){
+	int size=0;
+	char* end;
+	
+	size = strlen(str);
+	
+	if(!size)
+		return 0;
 
-    fprintf(stderr,"Start at %s\n",str);
+	end = str + size -1;
 
-    //TODO:
-    //don't use malloc, use a char vector
-    //and change pointer arithmetic to
-    //vector index
-    newStr=malloc(255*sizeof(char));
+	while(*str==' ')
+		str++;
+	while(*end==' ')
+		end--;
 
-    //Go to first number
-    while((*str<'0'||*str>'9') && (*newStr!='-') )
-            str++;
+	if(*end != ']')
+		return 0;
+	if(*str != '[')
+		return 0;
 
-    //Make a copy of string, substitute , for ' '
-    for(i=0;str[i]!='\0';i++){
-            if(str[i]==',')
-                    newStr[i]=' ';
-            else
-                    newStr[i]=str[i];
-    }
-    newStr[i]='\0';
-    fprintf(stderr,"Copy is %s\n",newStr);
+	str++;
+	while(str < end){
+		if(	(*str>='0'&&*str<='9') || (*str == '-') ||
+			(*str == '.') || (*str == ',') ||
+			(*str == ' ') || (*str == ';') ){
+			str++;
+		} else {
+			return 0;
+		}
+	}
 
-    //until the end of string
-    for(i=0,j=0,num=0;*newStr!='\0';j++,num++){
-        fprintf(stderr,"Outter Cycle Start %s\n",newStr);
-
-        //get number
-        aux.matrix[i][j]=atof(newStr);
-        fprintf(stderr,"Got number: %8.4f \n",aux.matrix[i][j]);
-
-        //go to next non-number
-        while((*newStr>='0'&&*newStr<='9')||*newStr=='.'||*newStr=='-'){
-                newStr++;
-        }
-
-        //go to next number, check for ; and for \0!
-        while( ( (*newStr<'0') || (*newStr>'9') ) && (*newStr!='-') ){
-            fprintf(stderr,"Inner Cycle Start\n");
-                if(*newStr=='\0')
-                        break;
-                if(*newStr==';'){
-                        j=-1;
-                        i++;
-                }
-                newStr++;
-            fprintf(stderr,"Inner Cycle End\n");
-        }
-        fprintf(stderr,"Outter Cycle End\n");
-    }
-
-    fprintf(stderr,"Nice\n");
-    aux.rows = i + 1;
-    aux.columns = j;
-    if ((aux.rows * aux.columns) != num) {
-        fprintf(stderr,"\n new_MATRIX : Invalid Input (Number of values = %d | dimension = %dx%d)\n", num, aux.rows, aux.columns);
-        return 1;
-    }
-
-    *M1=aux;
-
-    fprintf(stderr,"Finish\n");
-    return 0;
+	return 1;
 }
-
 
 Matrix empty_matrix(int rows, int col) {
     Matrix aux;
@@ -223,6 +149,72 @@ Matrix empty_matrix(int rows, int col) {
 
     return aux;
 }
+
+Matrix matrix_eye(unsigned char dim, double value) {
+    Matrix Mdest = empty_matrix(dim, dim);
+    Mdest.rows = dim;
+    Mdest.columns = dim;
+    int i;
+    for (i = 0; i < dim; i++) {
+        Mdest.matrix[i][i] = value;
+    }
+    return Mdest;
+}
+
+/**
+ * Writes M1 to str.
+ *
+ */
+void matrix_string(Matrix *M1, char* str){
+	int j,k;
+
+	*str='[';
+	str++;
+	
+	//for every row
+	for(j=0;j<M1->rows;j++){
+		//print every number in the row except last one
+		for(k=0;k<M1->columns-1;k++){
+			//print number
+			sprintf(str,"%12.6f",M1->matrix[j][k]);
+			str+=strlen(str);
+			//print space
+			*str=' ';
+			str++;
+		}
+
+		//print last number in the row and ';' if
+		//we still have rows to go, otherwise ']\0'
+		sprintf(str,"%12.6f",M1->matrix[j][k]);
+		str+=strlen(str);
+		
+		//if this isn't the last row
+		if(j<M1->rows-1){
+			*str=';';
+			str++;
+		} else {
+			//close brackets and close string
+			*str=']';
+			str++;
+			*str='\0';
+		}
+	}
+	return;
+}
+
+/**
+ * Prints M1 to stdout. Uses matrix_string().
+ */
+
+void matrix_print(Matrix *M1){
+        char buf[500];
+
+        matrix_string(M1,buf);
+        printf("%s\n",buf);
+
+        return;
+}
+
 
 Matrix matrix_mul(Matrix *M1, Matrix *M2) {
     if (M1->columns != M2->rows) {
@@ -360,17 +352,6 @@ Matrix matrix_inv(Matrix *Msrc) {
     return Mdest;
 }
 
-Matrix matrix_eye(unsigned char dim, double value) {
-    Matrix Mdest = empty_matrix(dim, dim);
-    Mdest.rows = dim;
-    Mdest.columns = dim;
-    int i;
-    for (i = 0; i < dim; i++) {
-        Mdest.matrix[i][i] = value;
-    }
-    return Mdest;
-}
-
 Matrix matrix_sum(Matrix *M1, Matrix *M2) {
     int i, j;
     Matrix Mdest = empty_matrix(M1->rows, M1->columns);
@@ -401,60 +382,5 @@ int strlen(char* str){
 	for(i=0;str[i]!='\0';i++);
 
 	return i;
-}
-
-/**
- * Writes M1 to str.
- *
- */
-void matrix_string(Matrix *M1, char* str){
-	int j,k;
-
-	*str='[';
-	str++;
-	
-	//for every row
-	for(j=0;j<M1->rows;j++){
-		//print every number in the row except last one
-		for(k=0;k<M1->columns-1;k++){
-			//print number
-			sprintf(str,"%12.6f",M1->matrix[j][k]);
-			str+=strlen(str);
-			//print space
-			*str=' ';
-			str++;
-		}
-
-		//print last number in the row and ';' if
-		//we still have rows to go, otherwise ']\0'
-		sprintf(str,"%12.6f",M1->matrix[j][k]);
-		str+=strlen(str);
-		
-		//if this isn't the last row
-		if(j<M1->rows-1){
-			*str=';';
-			str++;
-		} else {
-			//close brackets and close string
-			*str=']';
-			str++;
-			*str='\0';
-		}
-	}
-	return;
-}
-
-/*
- * This was used for a test,
- * but shouldn't really be here. I think.
- */
-
-void matrix_print(Matrix *M1){
-        char buf[500];
-
-        matrix_string(M1,buf);
-        printf("%s\n",buf);
-
-        return;
 }
 
