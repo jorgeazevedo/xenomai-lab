@@ -442,7 +442,7 @@ void create_io(void){
         io.output_pipes=(RT_PIPE*)safe_malloc(io.outputp_num*sizeof(RT_PIPE));
         for(i=0;i<io.outputp_num;i++){
 
-                if(rt_pipe_create(io.output_pipes+i,io.outputp_strings[i],P_MINOR_AUTO,256))
+                if(rt_pipe_create(io.output_pipes+i,io.outputp_strings[i],P_MINOR_AUTO,QUEUE_SIZE))
                         ERROR("Failed to create pipe %s\n",io.outputp_strings[i]);
 
         }
