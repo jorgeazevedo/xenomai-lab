@@ -208,7 +208,7 @@ void matrix_print(Matrix *M1){
         char buf[500];
 
         matrix_string(M1,buf);
-        printf("%s\n",buf);
+        DEBUG("%s\n",buf);
 
         return;
 }
