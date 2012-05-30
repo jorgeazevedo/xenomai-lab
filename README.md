@@ -4,6 +4,8 @@ Xenomai Lab
 
 A Platform for Digital Real-Time Control.
 
+This is an early alpha release.
+
 Installation
 ------------
 
