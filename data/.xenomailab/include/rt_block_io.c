@@ -169,7 +169,7 @@ void func_try(int ret, char*func){
 		case -EWOULDBLOCK:
 			ERROR("-EWOULDBLOCK\n");
 		default:
-			ERROR("Failed with unknonwn error!\n");
+			ERROR("Failed with unknown error!\n");
 			break;
 	}
 }
