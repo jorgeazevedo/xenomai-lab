@@ -74,11 +74,12 @@ change some operational settings in runtime. The procedure to edit or add new
 settings to your own block is not complex per say, but it is somewhat
 extensive.
 
-There are **three types** of settings:
+There are **four types** of settings:
 
 * Strings (_char[]_)
 * Integer (_int_)
 * Doubles (_double_)
+* Matrices (_Matrix_)
 
 A block setting lives in **4 distinct places** inside the block folder.
 
@@ -96,6 +97,7 @@ type of settings
     aString=Str1
     anInt=40
     aDouble=40.0
+    aMatrix=[1 0; 0 1]
     
     [Task]
     Priority=99
@@ -112,6 +114,7 @@ from your code.
         char aString[40];
         int anInt;
         double aDouble;
+        Matrix aMatrix;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
     };
@@ -137,6 +140,7 @@ Continuing our example
         get_string("Operation","aString",gs->aString);
         get_int("Operation","anInt",&gs->anInt);
         get_double("Operation","aDouble",&gs->aDouble);
+        get_matrix("Operation","aMatrix",&gs->aMatrix);
 
         get_int("Task","Priority",&gs->task_prio);
     }
@@ -144,6 +148,7 @@ Continuing our example
         store_string("Operation", "aString", gs->aString);
         store_int("Operation", "anInt", gs->anInt);
         store_double("Operation", "aDouble", gs->aDouble);
+        store_matrix("Operation","aMatrix",&gs->aMatrix);
 
         store_int("Task","Priority",gs->task_prio);
     }
@@ -168,6 +173,7 @@ Continuing with our example
         newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
         newEntry("anInt:",&gs->anInt);
         newEntry("aDouble:",&gs->aDouble);
+        newMatrix("aMatrix:",&gs->aMatrix);
     }
 
 
