@@ -153,7 +153,6 @@ void func_try(int ret, char*func){
 			break;
 		case -EEXIST:
 			ERROR("EEXIST!\n");
-			break;
 		case -EPERM:
 			ERROR("EPERM: Invalid context for calling mutex\n");
 		case -ENOMEM:
@@ -170,7 +169,6 @@ void func_try(int ret, char*func){
 			ERROR("-EWOULDBLOCK\n");
 		default:
 			ERROR("Failed with unknown error (%d)!\n",ret);
-			break;
 	}
 }
 
