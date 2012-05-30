@@ -418,7 +418,7 @@ void create_io(void){
         for(i=0;i<io.input_num;i++){
 
                 if(rt_queue_create(io.input_queues+i,io.input_strings[i],
-                QUEUE_SIZE,MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
+                sizeof(Matrix),MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
                         DEBUG("%s already exists, binding\n",io.input_strings[i]);
                         if(rt_queue_bind(io.input_queues+i,io.input_strings[i],TM_INFINITE))
                                 ERROR("Failed to create bind to queue %s!\n",io.input_strings[i]);
@@ -430,7 +430,7 @@ void create_io(void){
         for(i=0;i<io.output_num;i++){
 
                 if(rt_queue_create(io.output_queues+i,io.output_strings[i],
-                QUEUE_SIZE,MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
+                sizeof(Matrix),MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
                         DEBUG("%s already exists, binding\n",io.output_strings[i]);
                         if(rt_queue_bind(io.output_queues+i,io.output_strings[i],TM_INFINITE))
                                 ERROR("Failed to create and bind to queue %s!\n",io.output_strings[i]);
@@ -442,7 +442,7 @@ void create_io(void){
         io.output_pipes=(RT_PIPE*)safe_malloc(io.outputp_num*sizeof(RT_PIPE));
         for(i=0;i<io.outputp_num;i++){
 
-                if(rt_pipe_create(io.output_pipes+i,io.outputp_strings[i],P_MINOR_AUTO,QUEUE_SIZE))
+                if(rt_pipe_create(io.output_pipes+i,io.outputp_strings[i],P_MINOR_AUTO,sizeof(Matrix)))
                         ERROR("Failed to create pipe %s\n",io.outputp_strings[i]);
 
         }

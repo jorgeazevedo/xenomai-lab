@@ -42,16 +42,16 @@
 #include "mtrx.h"
 #include "settings.h"
 
-
 //Useful Macros
 //Commenting this define disables debug messages
 #define DEBUGON
 
-#define ERROR(...) fprintf(stderr, "E: %s: ", __PRETTY_FUNCTION__),fprintf(stderr,__VA_ARGS__),exit(1)
+#define ERROR(...) fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__),fprintf(stderr,__VA_ARGS__),fflush(stderr),exit(1)
+#define RETERROR(...) {fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__);fprintf(stderr,__VA_ARGS__);fflush(stderr);return 1;}
 
 #ifdef DEBUGON
 
-        #define DEBUG(...) printf("%s: ", __PRETTY_FUNCTION__),printf(__VA_ARGS__)
+        #define DEBUG(...) printf("%20s: \t", __PRETTY_FUNCTION__),printf(__VA_ARGS__)
 #else
         #define	DEBUG(...)
 #endif

@@ -22,8 +22,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define RMAX 4
-#define CMAX 4
+//size of matrix i sizeof(double)*RMAX*CMAX + sizeof(short)*2
+//On x86: 8 bytes and 2 bytes, respectively
+#define RMAX 8
+#define CMAX 8
 
 //Useful Macros
 //Commenting this define disables debug messages

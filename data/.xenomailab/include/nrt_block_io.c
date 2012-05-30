@@ -18,7 +18,6 @@
 
 #include "nrt_block_io.h"
 
-#define QUEUE_SIZE 256
 #define MAX_MESSAGE_LENGTH 1
 
 //void test(void);
@@ -324,6 +323,7 @@ void read_inputs()
 	for(i=0;i<io.inputp_num;i++){
 		if(read(io.input_pipes[i],&sample,sizeof(sample)) < 0)
 			stopflag=0;
+		
 		io.inputp_result[i]=sample;
 		//DEBUG("%s-->%4.2f\t", io.inputp_strings[i]+36,io.inputp_result[i]);
 	}
