@@ -21,7 +21,7 @@ in the Appendix section.
 
 ### Dependencies
 
-    $ sudo apt-get install libboost-graph-dev qt4-dev-tools build-essential
+    $ sudo apt-get install build-essential libqt4-dev libboost-graph-dev
 
 ### Compile Xenomai Lab:
 
