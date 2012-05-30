@@ -240,7 +240,7 @@ Matrix matrix_mul_double(Matrix *M1, double num) {
 
 	for(i=0;i < M1->rows;i++){
 		for(j=0;j < M1->columns;j++)
-			Mdest.matrix[i][i]=M1->matrix[i][j]*num;
+			Mdest.matrix[i][j]=M1->matrix[i][j]*num;
 	}
 
 	return Mdest;
