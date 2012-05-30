@@ -138,7 +138,9 @@ void assert_io_min(int min_input, int min_output);
 void free_io(void);
 
 void read_inputs();
+void read_input_queues();
 void write_outputs(Matrix sample);
+void write_output_queues(Matrix* sample);
 
 int register_mutex(RT_MUTEX* mut, char* name);
 void free_mutex(RT_MUTEX* mut);

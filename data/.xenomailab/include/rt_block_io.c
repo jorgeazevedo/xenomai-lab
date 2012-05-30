@@ -467,8 +467,18 @@ void free_io(void){
         free(io.output_pipes);
 }
 
+void read_inputs(){
 
-void read_inputs()
+	read_input_queues();
+
+	/*
+	 * After this read_input_queues we want the settings
+	 * to be "static"
+	 */
+	settings_lock(&gs_mtx);
+}
+
+void read_input_queues()
 {
         short i;
 	Matrix sample;
@@ -504,22 +514,21 @@ void read_inputs()
 	}
 
 
-	/*
-	 * After this read_inputs we want the settings
-	 * to be "static"
-	 */
-
-	settings_lock(&gs_mtx);
 }
 
 void write_outputs(Matrix sample)
 {
 	settings_unlock(&gs_mtx);
+	write_output_queues(&sample);
+}
+
+void write_output_queues(Matrix* sample)
+{
 	short i;
-	//printf("%4.2f ->",sample);
+
 	for(i=0;i<io.output_num;i++){
 
-		switch(rt_queue_write(io.output_queues+i,&sample,sizeof(sample),Q_URGENT)){
+		switch(rt_queue_write(io.output_queues+i,sample,sizeof(*sample),Q_URGENT)){
 		//switch(rt_queue_write(io.output_queues+i,&sample,sizeof(sample),Q_NORMAL|Q_BROADCAST)){
 			case -EINVAL:
 				DEBUG("%s queue does not exist!\n",io.output_strings[i]);
@@ -540,7 +549,7 @@ void write_outputs(Matrix sample)
         //printf("\n");
         for(i=0;i<io.outputp_num;i++){
                 //rt_pipe_flush(io.output_pipes+i,XNPIPE_OFLUSH);
-                rt_pipe_write(io.output_pipes+i, &sample, sizeof(sample), P_URGENT);
+                rt_pipe_write(io.output_pipes+i, sample, sizeof(*sample), P_URGENT);
         }
 
 
