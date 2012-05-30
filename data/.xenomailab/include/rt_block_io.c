@@ -140,7 +140,7 @@ void finalize_block(){
 
 	func_try(
 		rt_task_delete(&main_task),
-		"rt_task_deleteLoop");
+		"rt_task_deleteTask");
 
 	DEBUG("Terminated\n");
 }
