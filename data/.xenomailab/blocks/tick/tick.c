@@ -42,7 +42,7 @@ void loop(void *arg){
 	while(running){
 		rt_task_wait_period(NULL);
 
-		write_outputs(outputMatrix);
+		write_output_queues(&outputMatrix);
 
 		//Change period if changed in GUI
 		if(*current_period!=gs->sampling_period*1000){
