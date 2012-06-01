@@ -213,6 +213,55 @@ void matrix_print(Matrix *M1){
         return;
 }
 
+/**
+ * Prints a matrix over multiple lines.
+ * \param M1 Pointer to the Matrix to print
+ * \param name Name of the Matrix to display on screen
+ * \param format Format to print numbers, e.g "%1.3f".
+ */
+void matrix_print_pretty(Matrix * M1, char* name, char* format){
+	int i,j,k;
+
+	//Force a decent format
+	if(format[0] != '%' || format[2] != '.' || format[4] != 'f' || format==NULL)
+		format="%1.3f";
+
+	//Print name of Matrix. We want this centered over middle row
+	//Start with a space over |
+	DEBUG(" ");
+
+	//Calculate the amount of spaces for one number
+	//in the given format. In %1.3f, that's 1+3=4.
+	char spaces[]="%4s ";
+	spaces[1]= 0x30 + (format[1] - 0x30) + (format[3] - 0x30);
+
+	//Print spaces untill middle number
+	for(i=0;i<M1->columns-2;i++)
+		printf(spaces," ");
+
+	//Print name over middle number
+	printf("%s\n",name);
+
+	//Print the actual matrix	
+	//for every row
+	for(j=0;j<M1->rows;j++){
+		printf("%21s \t|",":");
+		//print every number in the row except last one and first one
+		for(k=0;k<M1->columns-1;k++){
+			printf(format,M1->matrix[j][k]);
+			printf(" ");
+		}
+
+		//print last number in the row and ';' if
+		//we still have rows to go, otherwise ']\0'
+		printf(format,M1->matrix[j][k]);
+		printf("|\n");
+		
+	}
+
+	return;
+}
+
 //TODO: matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *res)
 Matrix matrix_mul(Matrix *M1, Matrix *M2) {
     if (M1->columns != M2->rows) {

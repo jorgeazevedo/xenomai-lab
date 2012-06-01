@@ -59,6 +59,7 @@ Matrix empty_matrix(int rows,int col);
 Matrix matrix_eye(unsigned char dim, double value);
 void matrix_string(Matrix *M1, char* str);
 void matrix_print(Matrix * M1);
+void matrix_print_pretty(Matrix * M1, char* name, char* format);
 
 //Math operations
 Matrix matrix_mul(Matrix *M1, Matrix *M2);
