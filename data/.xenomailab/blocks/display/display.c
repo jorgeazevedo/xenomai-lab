@@ -59,27 +59,10 @@ void print_num(double num){
 
 Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	int i,j,k;
-
 	printf("\n");
 	for(i=0;i<numChannels;i++){
-		printf("%s= |\t",io.inputp_strings[i]+36);
-		for(j=0;j<inputChannel[i].rows;j++){
-			for(k=0;k<inputChannel[i].columns;k++){
-
-				print_num(inputChannel[i].matrix[j][k]);
-
-
-				if(k!=(inputChannel[i].columns-1))
-					printf("\t");
-				else{
-					if(j!=(inputChannel[i].rows-1))
-						printf("; ");
-					else
-						printf("|");
-				}
-			}
-		}
-		printf("\n");
+		DEBUG("%s:\n",io.inputp_strings[i]+36);
+		matrix_print(&inputChannel[i]);
 			
 	}
 	
