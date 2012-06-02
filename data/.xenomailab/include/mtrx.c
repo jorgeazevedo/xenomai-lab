@@ -82,7 +82,7 @@ Matrix new_matrix(char *str){
 	Matrix aux = empty_matrix(RMAX, CMAX);
 
 	if(new_matrix_safe(&aux,str))
-		ERROR("The given string is invalid %s",str);
+		ERROR("The given string is invalid %s\n",str);
 
 	return aux;
 }
