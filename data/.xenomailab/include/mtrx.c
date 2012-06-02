@@ -238,8 +238,10 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	//(using matrix_string's algorithm)
 	char* str = buf;
 	for(k=0;k<M1->columns;k++){
-		*str=' ';
-		str++;
+		if(M1->matrix[0][k] >= 0){
+			*str=' ';
+			str++;
+		}
 
 		sprintf(str,format,M1->matrix[0][k]);
 		str+=strlen(str);
@@ -253,6 +255,8 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	//and discount for the size of name, since we wan't name
 	//printed around the center point of the line
 	for(i=0;i<strlen(buf)/2-strlen(name)/2;i++)
+		printf(" ");
+	if(strlen(buf)%2)
 		printf(" ");
 	printf("%s\n",name);
 
