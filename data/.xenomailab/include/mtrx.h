@@ -64,6 +64,7 @@ void matrix_print(Matrix * M1);
 void matrix_print_pretty(Matrix * M1, char* name, char* format);
 
 //Math operations
+int matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *Mdest);
 Matrix matrix_mul(Matrix *M1, Matrix *M2);
 Matrix matrix_mul_double(Matrix *M1, double num);
 Matrix matrix_tran(Matrix *Msrc);

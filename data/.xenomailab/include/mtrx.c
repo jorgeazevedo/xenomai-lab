@@ -284,25 +284,41 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	return;
 }
 
-//TODO: matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *res)
+/**
+ * Multiples Mdest = M1*M2
+ */
+
+int matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *Mdest){
+	int i, j, k;
+
+	if (M1->columns != M2->rows)
+		RETERROR("Dimensions mismatch (M1->columns (%d) != M2->rows (%d))\n",M1->columns,M2->rows);
+
+	// Inicializar Mdest
+	*Mdest = empty_matrix(M1->rows, M2->columns);
+
+	//TODO: alterar para evitar desperdicios de memoria, criar flag initialized
+	for (i = 0; i < (M1->rows); i++) {
+		for (j = 0; j < (M2->columns); j++) {
+			for (k = 0; k < (M1->columns); k++) {
+				Mdest->matrix[i][j] += M1->matrix[i][k] * M2->matrix[k][j];
+			}
+		}
+	}
+
+	return 0;	
+}
+
+/**
+ * Returns M1*M2
+ */
 Matrix matrix_mul(Matrix *M1, Matrix *M2) {
-    if (M1->columns != M2->rows) {
-        printf("matrix_mul: Dimensions mismatch");
-        exit(1);
-    }
-    // Mdest=M1*M2
-    int i, j, k;
-    // Inicializar Mdest
-    Matrix Mdest = empty_matrix(M1->rows, M2->columns);
-    //alterar para evitar desperdicios de memoria, criar flag initialized
-    for (i = 0; i < (M1->rows); i++) {
-        for (j = 0; j < (M2->columns); j++) {
-            for (k = 0; k < (M1->columns); k++) {
-                Mdest.matrix[i][j] += M1->matrix[i][k] * M2->matrix[k][j];
-            }
-        }
-    }
-    return Mdest;
+	Matrix aux = empty_matrix(RMAX, CMAX);
+
+	if(matrix_mul_safe(M1,M2,&aux))
+		ERROR("Failed to multiply given matrices.\n");
+
+	return aux;
 }
 
 Matrix matrix_mul_double(Matrix *M1, double num) {
