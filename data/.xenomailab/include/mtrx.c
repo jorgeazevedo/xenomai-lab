@@ -223,7 +223,9 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	int i,j,k;
 
 	//Force a decent format
-	if(format[0] != '%' || format[2] != '.' || format[4] != 'f' || format==NULL)
+	if(format==NULL)
+		format="%1.3f";
+	else if(format[0] != '%' || format[2] != '.' || format[4] != 'f')
 		format="%1.3f";
 
 	//Print name of Matrix. We want this centered over middle row
