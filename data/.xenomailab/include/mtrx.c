@@ -18,6 +18,7 @@
 
 #include "mtrx.h"
 
+
 ///This function is not part of the public API
 int strlen(char* str);
 
@@ -221,6 +222,7 @@ void matrix_print(Matrix *M1){
  */
 void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	int i,j,k;
+	char buf[CHAR_BUFFER_SIZE];
 
 	//Force a decent format
 	if(format==NULL)
@@ -229,25 +231,33 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 		format="%1.3f";
 
 	//Print name of Matrix. We want this centered over middle row
-	//Start with a space over |
+	
+	//Start with a space over the first space before |
 	DEBUG(" ");
 
-	//Calculate the amount of spaces for one number
-	//in the given format. In %1.3f, that's 1+3=4.
-	char spaces[]="%4s ";
-	spaces[1]= 0x30 + (format[1] - 0x30) + (format[3] - 0x30);
+	//Build string with half ot the first row of the matrix
+	//(using matrix_string's algorithm)
+	char* str = buf;
+	for(k=0;k<M1->columns;k++){
+		sprintf(str,format,M1->matrix[0][k]);
+		str+=strlen(str);
 
-	//Print spaces untill middle number
-	for(i=0;i<M1->columns-2;i++)
-		printf(spaces," ");
-
-	//Print name over middle number
+		*str=' ';
+		str++;
+	}
+	*str='\0';
+	
+	//Print spaces for the half the length of the string
+	//and discount for the size of name, since we wan't name
+	//printed around the center point of the line
+	for(i=0;i<strlen(buf)/2-strlen(name)/2;i++)
+		printf(" ");
 	printf("%s\n",name);
 
 	//Print the actual matrix	
 	//for every row
 	for(j=0;j<M1->rows;j++){
-		printf("%21s \t|",":");
+		printf("%21s \t |",":");
 		//print every number in the row except last one and first one
 		for(k=0;k<M1->columns-1;k++){
 			printf(format,M1->matrix[j][k]);
