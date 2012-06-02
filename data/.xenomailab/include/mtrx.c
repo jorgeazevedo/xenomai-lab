@@ -409,7 +409,7 @@ int matrix_inv_safe(Matrix* Msrc, Matrix* Mdest){
 	double det,temp;
 
 	if(matrix_det_safe(Msrc,&det))
-		RETERROR("Matrix is not inversable (cannot calculate determinant)");
+		RETERROR("Failed to calculate determinant");
 
 	if (det == 0)
 		RETERROR("Matrix is not inversable (determinant is zero)");
@@ -433,9 +433,11 @@ int matrix_inv_safe(Matrix* Msrc, Matrix* Mdest){
 		    Maux.matrix[m][n] = Msrc->matrix[x][y];
 		}
 	    }
-	    if(matrix_det_safe(Msrc,&temp))
-		RETERROR("Matrix is not inversable (cannot calculate determinant)");
-	    Mtmp.matrix[i][j] = matrix_det(&Maux) / temp;
+	    if(matrix_det_safe(&Maux,&temp))
+		RETERROR("Failed to calculate determinant");
+
+	    Mtmp.matrix[i][j] = temp / det;
+
 	    if (((i + j) % 2) != 0) {
 		Mtmp.matrix[i][j] = -1 * Mtmp.matrix[i][j];
 	    }
