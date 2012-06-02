@@ -71,6 +71,7 @@ Matrix matrix_tran(Matrix *Msrc);
 Matrix matrix_minor(Matrix* M1, int row, int col);
 int matrix_det_safe(Matrix* Msrc,double* result);
 double matrix_det(Matrix *Msrc);
+int matrix_inv_safe(Matrix* Msrc, Matrix* Mdest);
 Matrix matrix_inv(Matrix *Msrc);
 Matrix matrix_sum(Matrix *M1, Matrix *M2);
 Matrix matrix_sub(Matrix *M1, Matrix *M2);

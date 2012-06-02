@@ -404,49 +404,51 @@ double matrix_det(Matrix *Msrc) {
 	return aux;
 }
 
-//TODO: matrix_inv_safe
+int matrix_inv_safe(Matrix* Msrc, Matrix* Mdest){
+	int i, j, m, n, x, y;
+	double det;
+
+	det = matrix_det(Msrc);
+	if (det == 0)
+		RETERROR("Matrix is not inversable (determinant is zero)");
+
+	Matrix Mtmp = empty_matrix(Msrc->rows, Msrc->columns);
+	Matrix Maux = empty_matrix(Msrc->rows - 1, Msrc->columns - 1);
+
+	//matriz adjunta de Msrc
+	for (i = 0; i < (Mtmp.rows); i++) {
+	for (j = 0; j < (Mtmp.columns); j++) {
+	    for (m = 0; m < Maux.rows; m++) {
+		for (n = 0; n < Maux.columns; n++) {
+		    x = m;
+		    y = n;
+		    if (m >= i) {
+			x = m + 1;
+		    }
+		    if (n >= j) {
+			y = n + 1;
+		    }
+		    Maux.matrix[m][n] = Msrc->matrix[x][y];
+		}
+	    }
+	    Mtmp.matrix[i][j] = matrix_det(&Maux) / det;
+	    if (((i + j) % 2) != 0) {
+		Mtmp.matrix[i][j] = -1 * Mtmp.matrix[i][j];
+	    }
+	}
+	}
+	*Mdest = matrix_tran(&Mtmp);
+	return 0;
+}
+
+
 Matrix matrix_inv(Matrix *Msrc) {
-    int i, j, m, n, x, y;
-    double det;
-    if (Msrc->rows != Msrc->columns) {
-        printf("\n Matrix isn't square \n");
-        fflush(stdout);
-        exit(1);
-    }
-    det = matrix_det(Msrc);
-    if (det == 0) {
-        printf("\n Matrix is not inversable \n");
-        fflush(stdout);
-        exit(1);
-    }
+	Matrix aux;
 
-    Matrix Mtmp = empty_matrix(Msrc->rows, Msrc->columns);
-    Matrix Maux = empty_matrix(Msrc->rows - 1, Msrc->columns - 1);
+	if(matrix_inv_safe(Msrc,&aux))
+		ERROR("Calculation of inverse matrix failed\n");
 
-    //matriz adjunta de Msrc
-    for (i = 0; i < (Mtmp.rows); i++) {
-        for (j = 0; j < (Mtmp.columns); j++) {
-            for (m = 0; m < (Mtmp.rows - 1); m++) {
-                for (n = 0; n < (Mtmp.columns - 1); n++) {
-                    x = m;
-                    y = n;
-                    if (m >= i) {
-                        x = m + 1;
-                    }
-                    if (n >= j) {
-                        y = n + 1;
-                    }
-                    Maux.matrix[m][n] = Msrc->matrix[x][y];
-                }
-            }
-            Mtmp.matrix[i][j] = matrix_det(&Maux) / det;
-            if (((i + j) % 2) != 0) {
-                Mtmp.matrix[i][j] = -1 * Mtmp.matrix[i][j];
-            }
-        }
-    }
-    Matrix Mdest = matrix_tran(&Mtmp);
-    return Mdest;
+	return aux;
 }
 
 Matrix matrix_sum(Matrix *M1, Matrix *M2) {
