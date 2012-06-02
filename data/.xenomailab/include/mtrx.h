@@ -68,6 +68,8 @@ int matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *Mdest);
 Matrix matrix_mul(Matrix *M1, Matrix *M2);
 Matrix matrix_mul_double(Matrix *M1, double num);
 Matrix matrix_tran(Matrix *Msrc);
+Matrix matrix_minor(Matrix* M1, int row, int col);
+int matrix_det_safe(Matrix* Msrc,double* result);
 double matrix_det(Matrix *Msrc);
 Matrix matrix_inv(Matrix *Msrc);
 Matrix matrix_sum(Matrix *M1, Matrix *M2);

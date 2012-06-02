@@ -337,51 +337,72 @@ Matrix matrix_tran(Matrix *Msrc) {
     return Mdest;
 }
 
+/* returns the minor from the given matrix where
+* the selected row and column are removed
+*/
+Matrix matrix_minor(Matrix* M1, int row, int col){
+	Matrix res;
+	int j,k;
+
+	if (row >= 0 && row < M1->rows && col >= 0 && col < M1->columns){
+		res = empty_matrix(M1->rows - 1, M1->columns - 1);
+
+		// copy the content of the matrix to the minor, except the selected
+		for (j=0; j <= (M1->rows-1 -  (row >= M1->rows-1)); j++){
+			for (k=0; k <= (M1->columns-1 - (col >= M1->columns-1)); k++){
+				res.matrix[j - (j > row)][k - (k > col)] = M1->matrix[j][k];
+			}
+		}
+	}
+	else
+		ERROR("Index for minor out of range (%d,%d) is not valid for a (%d,%d) matrix\n",row,col,M1->rows,M1->columns);
+
+	return res;
+}
+
+int matrix_det_safe(Matrix* Msrc,double* result){
+	Matrix a = *Msrc;
+	double d = 0;       // value of the determinant
+	int rows = Msrc->rows;
+	int cols = Msrc->columns;
+	int c;
+	double r=0;
+
+	//if this is a square matrix
+	if (rows == cols){
+		//If 1 x 1 matrix
+		if (rows == 1){
+			d = a.matrix[0][0];
+		}
+		//If 2x2
+		else if (rows == 2){
+			// the determinant of [a11,a12;a21,a22] is det = a11*a22-a21*a12
+			d = a.matrix[0][0] * a.matrix[1][1] - a.matrix[1][0] * a.matrix[0][1];
+		}
+		//If >= 3x3
+		else{
+			for (c = 0; c <= cols-1; c++){
+				Matrix M = matrix_minor(&a,0, c);
+				//d += pow(-1, 1+c)  * a(1, c) * Det(M);
+				matrix_det_safe(&M,&r);
+				d += ((c+1)%2 + (c+1)%2 - 1) * a.matrix[0][c] * r;  // faster than with pow()
+			}
+		}
+	}
+	else
+		RETERROR("Matrix is (%d,%d),must be square\n",Msrc->rows,Msrc->columns);
+	
+	*result=d;
+	return 0;
+}
+
 double matrix_det(Matrix *Msrc) {
+	double aux;
 
-    //Calculo do determinante de uma matriz por triangulaçao
+	if(matrix_det_safe(Msrc,&aux))
+		ERROR("Calculation of determinant failed\n");
 
-    int i, j, k;
-    double aux;
-    double values[Msrc->rows];
-    double matrix[Msrc->rows][Msrc->columns];
-
-    if ((Msrc->columns == 1) && (Msrc->rows) == 1) {
-        return Msrc->matrix[0][0];
-
-    }
-    //copia de matriz
-    for (i = 0; i < (Msrc->rows); i++) {
-        for (j = 0; j < (Msrc->columns); j++) {
-            matrix[i][j] = Msrc->matrix[i][j];
-        }
-    }
-
-    //1ªlinha
-    values[0] = matrix[0][0];
-    if (values[0] != 1) {
-        for (i = 0; i < (Msrc->columns); i++) {
-            matrix[0][i] = matrix[0][i] / values[0];
-        }
-    }
-    //linhas seguintes
-    for (i = 1; i < (Msrc->rows); i++) {
-        for (k = 0; k < i; k++) {
-            aux = matrix[i][k];
-            for (j = k; j < (Msrc->columns); j++) {
-                matrix[i][j] = matrix[i][j] - aux * matrix[i - 1][j];
-            }
-        }
-        values[i] = matrix[i][i];
-        for (j = 0; j < (Msrc->columns); j++) {
-            matrix[i][j] = matrix[i][j] / values[i];
-        }
-    }
-    aux = 1;
-    for (i = 0; i < (Msrc->rows); i++) {
-        aux = aux * values[i];
-    }
-    return aux;
+	return aux;
 }
 
 //TODO: matrix_inv_safe
