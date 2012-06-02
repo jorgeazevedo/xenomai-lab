@@ -325,13 +325,12 @@ Matrix matrix_mul_double(Matrix *M1, double num) {
 }
 
 Matrix matrix_tran(Matrix *Msrc) {
-    //Mdest=Msrc'
-    Matrix Mdest = empty_matrix(Msrc->columns, Msrc->rows); //verificar tambem caso ja esteja alocada a variavel
-    int i, j;
+    Matrix Mdest = empty_matrix(Msrc->columns, Msrc->rows);
+    int j, k;
 
-    for (i = 0; i < (Mdest.rows); i++) {
-        for (j = 0; j < (Mdest.columns); j++) {
-            Mdest.matrix[i][j] = Msrc->matrix[j][i];
+    for (j = 0; j < (Mdest.rows); j++) {
+        for (k = 0; k < (Mdest.columns); k++) {
+            Mdest.matrix[j][k] = Msrc->matrix[k][j];
         }
     }
     return Mdest;
