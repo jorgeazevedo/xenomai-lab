@@ -18,7 +18,6 @@
 
 #include "mtrx.h"
 
-
 ///This function is not part of the public API
 int strlen(char* str);
 
@@ -239,6 +238,9 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	//(using matrix_string's algorithm)
 	char* str = buf;
 	for(k=0;k<M1->columns;k++){
+		*str=' ';
+		str++;
+
 		sprintf(str,format,M1->matrix[0][k]);
 		str+=strlen(str);
 
@@ -260,12 +262,16 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 		printf("%21s \t |",":");
 		//print every number in the row except last one and first one
 		for(k=0;k<M1->columns-1;k++){
+			if(M1->matrix[j][k] >= 0)
+				printf(" ");
 			printf(format,M1->matrix[j][k]);
 			printf(" ");
 		}
 
 		//print last number in the row and ';' if
 		//we still have rows to go, otherwise ']\0'
+		if(M1->matrix[j][k] >= 0)
+			printf(" ");
 		printf(format,M1->matrix[j][k]);
 		printf("|\n");
 		
