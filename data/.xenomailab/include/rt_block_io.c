@@ -175,7 +175,7 @@ void func_try(int ret, char*func){
 void start_task(int priority, void* task_function){
 
 	func_try(
-		rt_task_create(&loop_task, NULL, 0, priority, T_JOINABLE),
+		rt_task_create(&loop_task, NULL, STACK_SIZE_IN_MATRIX_MUL*sizeof(Matrix), priority, T_JOINABLE),
 		"rt_task_create");
 
 	func_try(
