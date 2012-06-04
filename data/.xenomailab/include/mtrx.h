@@ -41,7 +41,7 @@
         #define	DEBUG(...)
 #endif
 
-#define CHAR_BUFFER_SIZE 1024
+#define CHAR_BUFFER_SIZE 4096
 
 #ifdef	__cplusplus
 extern "C" {

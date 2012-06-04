@@ -57,7 +57,7 @@
         #define	DEBUG(...)
 #endif
 
-#define CHAR_BUFFER_SIZE 1024
+#define CHAR_BUFFER_SIZE 4096
 #define MAX_MESSAGE_LENGTH 1
 //the default is around ~63 if Matrix is 8x8)
 #define STACK_SIZE_IN_MATRIX_MUL 120
