@@ -61,7 +61,7 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	int i;
 	printf("\n");
 	for(i=0;i<numChannels;i++)
-		matrix_print_pretty(&inputChannel[i],io.inputp_strings[i]+36,NULL);
+		matrix_print_pretty(&inputChannel[i],io.inputp_strings[i]+36,"%7.3f");
 	
 /*
 	for(i=0;i<io.inputp_num;i++){
