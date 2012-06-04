@@ -1,4 +1,3 @@
-
 Xenomai Lab
 ===========
 
@@ -9,7 +8,7 @@ This is an early alpha release.
 Installation
 ------------
 
-A fairly standard procedure.
+A fairly standard procedure. LOL.
 
 ### Xenomai
 
