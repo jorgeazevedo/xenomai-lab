@@ -33,6 +33,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+/**
+ * Because this library is also compiled from Qt,
+ * we can't define gnu_source, use_gnu. To avoid
+ * a compilation warning, we declare feenableexcept
+ * ourselves. This is a cheap hack.
+ */
+//#define _GNU_SOURCE
+//#define __USE_GNU
+#include <fenv.h>
+int feenableexcept(int excepts);
+
 #include <unistd.h>
 #include <sys/mman.h>   //MLOCKALL
 #include <stdlib.h>     //exit(1))
@@ -176,6 +187,7 @@ void settings_unlock(RT_MUTEX* mtx);
 void get_task_priority(int *value);
 
 void stop(int signum);
+void fp_exception(int sig, siginfo_t *siginfo, void *context);
 
 #ifdef __cplusplus
 }

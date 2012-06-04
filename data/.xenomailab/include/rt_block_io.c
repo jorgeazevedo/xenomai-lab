@@ -120,6 +120,18 @@ void initialize_block(int argc, char* argv[],size_t struct_size, int min_inputs,
 	signal(SIGTERM, stop);
 	signal(SIGINT, stop);
 
+	//Math exceptions - FE_ALL_EXCEPT);
+	//All except INEXACT.
+	feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW);
+	struct sigaction act;
+	memset (&act, '\0', sizeof(act));
+	act.sa_sigaction = &fp_exception;
+	/* The SA_SIGINFO flag tells sigaction() to use the sa_sigaction field, not sa_handler. */
+	act.sa_flags = SA_SIGINFO;
+
+	if (sigaction(SIGFPE, &act, NULL) < 0)
+		ERROR("Sigaction failed");
+
 	create_io();
 
         if(load_settings(io.config_file,struct_size))
@@ -936,4 +948,47 @@ void stop(int signum){
 	DEBUG("\n");
         DEBUG("Caught signal %d, exiting\n", signum);
         running=0;
+}
+
+/**
+ * For some reason I can't write to stderr if it's SIGFPE.
+ * And this only occurs when the exception is raised not in periodic_function
+ * but in a function called by periodic_function (e.g. custom lib, mtrx.c)
+ *
+ * This can be artificialy induced by calling "raise(SIGFPE);" with
+ * #include<signal.h>.
+ */
+void fp_exception(int sig, siginfo_t *siginfo, __attribute__((unused))void *context){
+	char* message;
+	switch(siginfo->si_code) {
+		case FPE_INTDIV:
+				message="integer divide by zero";
+				break;
+		case FPE_INTOVF:
+				message="integer overflow";
+				break;
+		case FPE_FLTDIV:
+				message="floating-point divide by zero";
+				break;
+		case FPE_FLTOVF:
+				message="floating-point overflow";
+				break;
+		case FPE_FLTUND:
+				message="floating-point underflow";
+				break;
+		case FPE_FLTRES:
+				message="floating-point inexact result";
+				break;
+		case FPE_FLTINV:
+				message="floating-point invalid operation";
+				break;
+		case FPE_FLTSUB:
+				message="subscript out of range";
+				break;
+		default:
+				message="unknown error. This is very strange.";
+	}
+	fprintf(stdout, "\nE: %17s: ", __PRETTY_FUNCTION__);
+	fprintf(stdout,"Caught signal %d. Exception: %s\n",sig,message);
+	exit(1);
 }
