@@ -20,29 +20,29 @@
 
 #include "plant_settings.h"
 
-Matrix systemBlock(Matrix A,Matrix B,Matrix u){
+Matrix systemBlock(Matrix B,Matrix A,Matrix u){
 	static double uA[CMAX];
 	static double yA[CMAX];
 	int i;
 	double aux=0;
 	Matrix yo=empty_matrix(1,1);
 
-	for(i=0;i<A.columns-1;i++){
+	for(i=0;i<B.columns-1;i++){
 	uA[i]=uA[i+1];
 	}
-	uA[A.columns-1]=u.matrix[0][0];
+	uA[B.columns-1]=u.matrix[0][0];
 
-	for(i=0;i<A.columns;i++){
-	aux=aux+A.matrix[0][i]*uA[A.columns-1-i];
+	for(i=0;i<B.columns;i++){
+	aux=aux+B.matrix[0][i]*uA[B.columns-1-i];
 	}
-	for(i=0;i<B.columns-1;i++){
-	aux=aux-B.matrix[0][i+1]*yA[B.columns-2-i];
+	for(i=0;i<A.columns-1;i++){
+	aux=aux-A.matrix[0][i+1]*yA[A.columns-2-i];
 	}
 
-	for(i=0;i<B.columns-2;i++){
+	for(i=0;i<A.columns-2;i++){
 	yA[i]=yA[i+1];
 	}
-	yA[B.columns-2]=aux;
+	yA[A.columns-2]=aux;
 
 	yo.matrix[0][0]=aux;
 	return yo;
@@ -51,18 +51,7 @@ Matrix systemBlock(Matrix A,Matrix B,Matrix u){
 Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	Matrix ret=empty_matrix(1,1);
 
-	/*
-	 * Insert periodic code here.
-	 */
-	
-	//Default operation: apply -1 gain
-	//ret=matrix_mul_double(&inputChannel[0], -2);
-	DEBUG("A\n");
-	matrix_print(&gs->A);
-	DEBUG("B\n");
-	matrix_print(&gs->B);
-
-        ret=systemBlock(gs->A,gs->B,inputChannel[0]);
+        ret=systemBlock(gs->B,gs->A,inputChannel[0]);
 
 	return ret;
 }

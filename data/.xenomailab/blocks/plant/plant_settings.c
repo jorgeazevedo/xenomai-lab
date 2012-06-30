@@ -27,8 +27,8 @@ RT_MUTEX gs_mtx;
 
 void load_gs(void){
 
-	get_matrix("Operation","A",&gs->A);
 	get_matrix("Operation","B",&gs->B);
+	get_matrix("Operation","A",&gs->A);
 
 	get_int("Task","Priority",&gs->task_prio);
 }
@@ -39,8 +39,8 @@ void load_gs(void){
 
 void unload_gs(void){
 
-	store_matrix("Operation","A",&gs->A);
 	store_matrix("Operation","B",&gs->B);
+	store_matrix("Operation","A",&gs->A);
 
 	store_int("Task","Priority",gs->task_prio);
 }

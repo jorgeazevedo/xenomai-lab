@@ -27,8 +27,8 @@ extern "C"
 #endif
 
 struct global_settings{
-	Matrix A;
 	Matrix B;
+	Matrix A;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
 };

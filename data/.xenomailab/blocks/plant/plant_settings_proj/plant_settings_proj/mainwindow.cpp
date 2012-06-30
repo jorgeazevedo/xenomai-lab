@@ -26,7 +26,7 @@ MainWindow::MainWindow(const QString &execName, const QString &name, QWidget *pa
     /*
      * Sets the text for the top half of the dialog.
      */
-    fillDialog("Plant","Transfer function of a given plant in the form A(Z)/B(Z)");
+    fillDialog("Plant","Transfer function of a given plant in the form B(Z)/A(Z)");
 }
 
 MainWindow::~MainWindow()
@@ -53,8 +53,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::setSettings()
 {
-    newMatrix("A",&gs->A);
     newMatrix("B",&gs->B);
+    newMatrix("A",&gs->A);
 }
 
 
