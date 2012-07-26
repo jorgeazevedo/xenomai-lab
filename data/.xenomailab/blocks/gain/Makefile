@@ -1,24 +1,10 @@
-### List of applications to be build
-EXECUTABLE=gain
-
-#Source files
-SRCS=gain.c gain_settings.c
-INCLUDES=#There are in ~/.xenomailab/include
-
-#Custom flags
-MY_CFLAGS=#compiler e.g. -Werror
-MY_LDFLAGS=#libs e.g. -lparapin
-
-#Everything bellow this point is common code
-
-INCLUDE_PATH=$(HOME)/.xenomailab/include
-INCLUDES+=rt_block_io.c settings.c strmap.c mtrx.c
+INCLUDE_SRC_DIR=$(HOME)/.xenomailab/include
+INCLUDE_OBJ_DIR=$(INCLUDE_SRC_DIR)/build/.obj
+INCLUDE_SRCS=rt_block_io.c settings.c strmap.c mtrx.c $(INCLUDES)
 SETTINGS_PROJECT_PATH=settings_gui/
 
-#preprend includes with include path
-PREPENDED_INCLUDES=$(INCLUDES:%.c=$(INCLUDE_PATH)/%.c)
-DEP=$(SRCS) $(PREPENDED_INCLUDES)
-OBJS=$(DEP:.c=.o)
+INCLUDE_OBJS= $(addprefix $(INCLUDE_OBJ_DIR)/,$(INCLUDE_SRCS:.c=.o))
+OBJS=$(SRCS:.c=.o)
 
 ### Default Xenomai installation path
 XENO ?= /usr/xenomai
@@ -40,28 +26,31 @@ CFLAGS=-fdiagnostics-show-option# -Wextra -Wundef -Wpointer-arith\
 #-Wcast-align -Wwrite-strings -Wswitch-enum -Wformat=2 -Wdisabled-optimization\
 #-Wmissing-include-dirs -Wfloat-equal -Wstrict-prototypes -Wstrict-overflow=5\
 #-Wswitch-default -Wconversion -Wsign-conversion
-CFLAGS+=-I$(INCLUDE_PATH) -O3
+CFLAGS+=-I$(INCLUDE_SRC_DIR) -O3
 CFLAGS+=$(shell $(XENOCONFIG) --skin=native --cflags) $(MY_CFLAGS)
 
 # This includes the library path of given Xenomai into the binary to make life
 # easier for beginners if Xenomai's libs are not in any default search path.
 LDFLAGS=-Xlinker -rpath -Xlinker $(shell $(XENOCONFIG) --libdir)
-# -lnative -L/usr/lib -lxenomai -lpthread
 LDFLAGS+=$(shell $(XENOCONFIG) --skin=native --ldflags)
 LDFLAGS+=-lm $(MY_LDFLAGS)
 
-all: $(DEP) $(EXECUTABLE)
+all: $(EXECUTABLE)
 	cd $(SETTINGS_PROJECT_PATH); qmake && make;
 
-$(EXECUTABLE): $(OBJS)
+$(EXECUTABLE): $(OBJS) $(INCLUDE_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(DEP):
-	$(CC) $(CFLAGS) -c -o $@
+$(INCLUDE_OBJ_DIR)/%.o: $(INCLUDE_SRC_DIR)/%.c $(INCLUDE_SRC_DIR)/%.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+%.o: %.c %.h
+
+.PHONY : clean cleanall
 clean::
-	$(RM) $(BLOCK) $(OBJS)
+	$(RM) $(OBJS) $(INCLUDE_OBJS)
 	cd $(SETTINGS_PROJECT_PATH); qmake && make clean;
-cleanall::
-	$(RM) $(BLOCK) $(OBJS) $(EXECUTABLE)
-	cd $(SETTINGS_PROJECT_PATH); qmake && make clean;
+
+cleanall: clean
+	$(RM) $(EXECUTABLE)
 
