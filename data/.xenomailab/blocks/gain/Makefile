@@ -1,13 +1,24 @@
-###### CONFIGURATION ######
-INCLUDE=$(HOME)/.xenomailab/include/
 ### List of applications to be build
 EXECUTABLE=gain
 
-DEP=gain.c gain_settings.c $(INCLUDE)rt_block_io.c $(INCLUDE)settings.c $(INCLUDE)strmap.c $(INCLUDE)mtrx.c
-OBJS=$(DEP:.c=.o)
+#Source files
+SRCS=gain.c gain_settings.c
+INCLUDES=#There are in ~/.xenomailab/include
 
-SETTINGS_EXECUTABLE=$(EXECUTABLE)_settings
+#Custom flags
+MY_CFLAGS=#compiler e.g. -Werror
+MY_LDFLAGS=#libs e.g. -lparapin
+
+#Everything bellow this point is common code
+
+INCLUDE_PATH=$(HOME)/.xenomailab/include
+INCLUDES+=rt_block_io.c settings.c strmap.c mtrx.c
 SETTINGS_PROJECT_FOLDER=settings_gui/
+
+#preprend includes with include path
+PREPENDED_INCLUDES=$(INCLUDES:%.c=$(INCLUDE_PATH)/%.c)
+DEP=$(SRCS) $(PREPENDED_INCLUDES)
+OBJS=$(DEP:.c=.o)
 
 ### Default Xenomai installation path
 XENO ?= /usr/xenomai
@@ -17,36 +28,40 @@ XENOCONFIG=$(shell PATH=$(XENO):$(XENO)/bin:$(PATH) which xeno-config 2>/dev/nul
 ### Sanity check
 ifeq ($(XENOCONFIG),)
 all::
-	@echo ">>> Invoke make like this: \"make XENO=/path/to/xeno-config\" <<<"
+	@echo ">> Invoke make like this: \"make XENO=/path/to/xeno-config\" <"
 	@echo
 endif
 
-MY_CFLAGS=-I$(INCLUDE)
-
+#compiler
 CC=$(shell $(XENOCONFIG) --cc)
 
-CFLAGS=$(shell $(XENOCONFIG) --skin=native --cflags) $(MY_CFLAGS)
+#Warnings
+CFLAGS=-fdiagnostics-show-option# -Wextra -Wundef -Wpointer-arith\
+#-Wcast-align -Wwrite-strings -Wswitch-enum -Wformat=2 -Wdisabled-optimization\
+#-Wmissing-include-dirs -Wfloat-equal -Wstrict-prototypes -Wstrict-overflow=5\
+#-Wswitch-default -Wconversion -Wsign-conversion
+CFLAGS+=-I$(INCLUDE_PATH) -O3
+CFLAGS+=$(shell $(XENOCONFIG) --skin=native --cflags) $(MY_CFLAGS)
 
-LDFLAGS=$(shell $(XENOCONFIG) --skin=native --ldflags) $(MY_LDFLAGS) -lnative -lm
-
-# This includes the library path of given Xenomai into the binary to make live
+# This includes the library path of given Xenomai into the binary to make life
 # easier for beginners if Xenomai's libs are not in any default search path.
-LDFLAGS+=-Xlinker -rpath -Xlinker $(shell $(XENOCONFIG) --libdir)
-
-#CFLAGS+=-lparapin
+LDFLAGS=-Xlinker -rpath -Xlinker $(shell $(XENOCONFIG) --libdir)
+# -lnative -L/usr/lib -lxenomai -lpthread
+LDFLAGS+=$(shell $(XENOCONFIG) --skin=native --ldflags)
+LDFLAGS+=-lm $(MY_LDFLAGS)
 
 all: $(DEP) $(EXECUTABLE)
 	cd $(SETTINGS_PROJECT_FOLDER); qmake && make;
 
 $(EXECUTABLE): $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(DEP):
-	$(CC) $(CFLAGS) $(LDFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c -o $@
 clean::
 	$(RM) $(BLOCK) $(OBJS)
-	cd $(SETTINGS_PROJECT_FOLDER); qmake && make clean;
+	cd $(SETTINGS_PROJECT_PATH); qmake && make clean;
 cleanall::
-	$(RM) $(BLOCK) $(OBJS) $(EXECUTABLE) $(SETTINGS_EXECUTABLE)
+	$(RM) $(BLOCK) $(OBJS) $(EXECUTABLE)
 	cd $(SETTINGS_PROJECT_FOLDER); qmake && make clean;
 
