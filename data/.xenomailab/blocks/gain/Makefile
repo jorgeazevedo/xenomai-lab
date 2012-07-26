@@ -13,7 +13,7 @@ MY_LDFLAGS=#libs e.g. -lparapin
 
 INCLUDE_PATH=$(HOME)/.xenomailab/include
 INCLUDES+=rt_block_io.c settings.c strmap.c mtrx.c
-SETTINGS_PROJECT_FOLDER=settings_gui/
+SETTINGS_PROJECT_PATH=settings_gui/
 
 #preprend includes with include path
 PREPENDED_INCLUDES=$(INCLUDES:%.c=$(INCLUDE_PATH)/%.c)
@@ -51,7 +51,7 @@ LDFLAGS+=$(shell $(XENOCONFIG) --skin=native --ldflags)
 LDFLAGS+=-lm $(MY_LDFLAGS)
 
 all: $(DEP) $(EXECUTABLE)
-	cd $(SETTINGS_PROJECT_FOLDER); qmake && make;
+	cd $(SETTINGS_PROJECT_PATH); qmake && make;
 
 $(EXECUTABLE): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
@@ -63,5 +63,5 @@ clean::
 	cd $(SETTINGS_PROJECT_PATH); qmake && make clean;
 cleanall::
 	$(RM) $(BLOCK) $(OBJS) $(EXECUTABLE)
-	cd $(SETTINGS_PROJECT_FOLDER); qmake && make clean;
+	cd $(SETTINGS_PROJECT_PATH); qmake && make clean;
 
