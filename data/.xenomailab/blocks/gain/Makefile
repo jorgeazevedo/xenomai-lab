@@ -7,7 +7,7 @@ DEP=gain.c gain_settings.c $(INCLUDE)rt_block_io.c $(INCLUDE)settings.c $(INCLUD
 OBJS=$(DEP:.c=.o)
 
 SETTINGS_EXECUTABLE=$(EXECUTABLE)_settings
-SETTINGS_PROJECT_FOLDER=$(SETTINGS_EXECUTABLE)_proj/$(SETTINGS_EXECUTABLE)_proj/
+SETTINGS_PROJECT_FOLDER=settings_gui/
 
 ### Default Xenomai installation path
 XENO ?= /usr/xenomai

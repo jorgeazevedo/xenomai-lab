@@ -9,14 +9,16 @@ QT       += core gui
 TARGET = gain_settings
 TEMPLATE = app
 
-#xenomai has a variable called signals.
+# Xenomai has a variable called signals.
 CONFIG += no_keywords
 
 INCLUDEDIR   = $$(HOME)/.xenomailab/include/
-DESTDIR      = $${PWD}/../../
-OBJECTS_DIR = ../$${TARGET}-build-desktop/
-MOC_DIR = ../$${TARGET}-build-desktop/
-RCC_DIR = ../$${TARGET}-build-desktop/
+DESTDIR      = ../
+OBJECTS_DIR = build/.obj/
+MOC_DIR = build/.moc/
+RCC_DIR = build/.rcc/
+UI_DIR = build/.ui/
+
 CLEAN_FILES += ${TARGET}
 
 SOURCES += main.cpp\
@@ -37,7 +39,9 @@ HEADERS  += mainwindow.h\
             $${INCLUDEDIR}mtrx.h\
             $${DESTDIR}gain_settings.h
 
-INCLUDEPATH +=  $$INCLUDEDIR $$DESTDIR /usr/include/xenomai
-LIBS += -L/usr/xenomai/lib -lxenomai -lpthread -lrt -lnative -Xlinker -rpath -Xlinker /usr/lib
+INCLUDEPATH += $$INCLUDEDIR $$DESTDIR /usr/include/xenomai
+LIBS += -lxenomai -lnative -Xlinker -rpath -Xlinker /usr/lib 
 
-QMAKE_CXXFLAGS += -D_GNU_SOURCE -D_REENTRANT -Wall -pipe -D__XENO__
+QMAKE_CXXFLAGS += -D_GNU_SOURCE -D_REENTRANT -D__XENO__ -pipe
+QMAKE_CXXFLAGS_WARN_ON += -Wextra -Wundef -Wpointer-arith -Wcast-align -Wwrite-strings -Wcast-qual -Wswitch-enum -Wformat=2
+QMAKE_CXXFLAGS_WARN_ON +=-fdiagnostics-show-option
