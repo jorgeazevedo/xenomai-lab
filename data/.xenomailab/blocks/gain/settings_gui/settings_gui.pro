@@ -12,32 +12,32 @@ TEMPLATE = app
 # Xenomai has a variable called signals.
 CONFIG += no_keywords
 
-INCLUDEDIR   = $$(HOME)/.xenomailab/include/
-DESTDIR      = ../
-OBJECTS_DIR = build/.obj/
-MOC_DIR = build/.moc/
-RCC_DIR = build/.rcc/
-UI_DIR = build/.ui/
+INCLUDEDIR   = $$(HOME)/.xenomailab/include
+DESTDIR      = ..
+OBJECTS_DIR =$${INCLUDEDIR}/build/.obj/
+MOC_DIR = $${INCLUDEDIR}/build/.moc/
+RCC_DIR = $${INCLUDEDIR}/build/.rcc/
+UI_DIR = $${INCLUDEDIR}/build/.ui/
 
 CLEAN_FILES += ${TARGET}
 
 SOURCES += main.cpp\
         mainwindow.cpp\
-        $${INCLUDEDIR}blockbase.cpp\
-        $${INCLUDEDIR}settings.c\
-        $${INCLUDEDIR}strmap.c\
-        $${INCLUDEDIR}rt_block_io.c\
-        $${INCLUDEDIR}mtrx.c\
-        $${DESTDIR}gain_settings.c\
+        $${INCLUDEDIR}/blockbase.cpp\
+        $${INCLUDEDIR}/settings.c\
+        $${INCLUDEDIR}/strmap.c\
+        $${INCLUDEDIR}/rt_block_io.c\
+        $${INCLUDEDIR}/mtrx.c\
+        $${DESTDIR}/gain_settings.c\
 
 
 HEADERS  += mainwindow.h\
-            $${INCLUDEDIR}blockbase.h\
-            $${INCLUDEDIR}settings.h\
-            $${INCLUDEDIR}strmap.h\
-            $${INCLUDEDIR}rt_block_io.h\
-            $${INCLUDEDIR}mtrx.h\
-            $${DESTDIR}gain_settings.h
+            $${INCLUDEDIR}/blockbase.h\
+            $${INCLUDEDIR}/settings.h\
+            $${INCLUDEDIR}/strmap.h\
+            $${INCLUDEDIR}/rt_block_io.h\
+            $${INCLUDEDIR}/mtrx.h\
+            $${DESTDIR}/gain_settings.h
 
 INCLUDEPATH += $$INCLUDEDIR $$DESTDIR /usr/include/xenomai
 LIBS += -lxenomai -lnative -Xlinker -rpath -Xlinker /usr/lib 
