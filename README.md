@@ -8,7 +8,9 @@ This is an early alpha release.
 Installation
 ------------
 
-A fairly standard procedure.
+Users wanting to bypass the rather complicated Xenomai installation process
+may want to try out the [VirtualBox
+VM](http://www.ieeta.pt/xenomailab/XenomaiLab.zip) (1.5GB) instead.
 
 ### Xenomai
 
