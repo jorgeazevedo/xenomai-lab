@@ -19,12 +19,7 @@ mv template.conf $1.conf
 mv template_settings.c $1_settings.c
 mv template_settings.h $1_settings.h
 
-cd template_settings_proj/template_settings_proj/
+cd settings_gui
 sed -i $regex *.h
 sed -i $regex *.cpp
 sed -i $regex *.pro
-mv template_settings.pro $1_settings.pro
-cd ..
-mv template_settings_proj $1_settings_proj
-cd ..
-mv template_settings_proj $1_settings_proj
