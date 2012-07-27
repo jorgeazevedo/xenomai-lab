@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
     BlockBase::blockSettingsInit(argc,argv,sizeof(struct global_settings));
 
-    MainWindow w(0,argv[0],argv[1]);
+    MainWindow w(argv[0],argv[1]);
     w.show();
 
     return a.exec();

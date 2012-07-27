@@ -27,7 +27,7 @@ class MainWindow : public BlockBase
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0, const QString& execName="missing", const QString& name="missing");
+    explicit MainWindow(const QString& execName, const QString& name,QWidget *parent = 0);
     virtual ~MainWindow();
 
 private:

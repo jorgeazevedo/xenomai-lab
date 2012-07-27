@@ -18,8 +18,7 @@
 
 #include "mainwindow.h"
 
-
-MainWindow::MainWindow(QWidget *parent, const QString &execName, const QString &name) :
+MainWindow::MainWindow(const QString &execName, const QString &name, QWidget *parent) :
     BlockBase(parent,execName,name)
 {
 
