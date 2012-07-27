@@ -40,7 +40,6 @@ LDFLAGS+=-lm $(MY_LDFLAGS)
 .PHONY : all
 
 all: $(EXECUTABLE) $(GUI)
-	cd $(SETTINGS_PROJECT_PATH); qmake master.pro && make
 
 $(GUI):
 	cd $(SETTINGS_PROJECT_PATH); qmake master.pro && make
