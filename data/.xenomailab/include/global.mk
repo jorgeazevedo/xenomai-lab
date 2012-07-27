@@ -1,12 +1,15 @@
+SETTINGS_PROJECT_PATH = settings_gui
+BUILD_DIR = $(SETTINGS_PROJECT_PATH)/build
+OBJ_DIR = $(BUILD_DIR)/.obj
+
 INCLUDE_SRC_DIR=$(HOME)/.xenomailab/include
 INCLUDE_BUILD_DIR=$(INCLUDE_SRC_DIR)/build
 INCLUDE_OBJ_DIR=$(INCLUDE_BUILD_DIR)/.obj
 INCLUDE_SRCS=rt_block_io.c settings.c strmap.c mtrx.c $(INCLUDES)
-SETTINGS_PROJECT_PATH=settings_gui/
 
 GUI=$(addsuffix _settings,$(EXECUTABLE))
 INCLUDE_OBJS=$(addprefix $(INCLUDE_OBJ_DIR)/,$(INCLUDE_SRCS:.c=.o))
-OBJS=$(SRCS:.c=.o)
+OBJS=$(addprefix $(OBJ_DIR)/,$(SRCS:.c=.o))
 
 ### Default Xenomai installation path
 XENO ?= /usr/xenomai
@@ -19,6 +22,8 @@ all::
 	@echo ">> Invoke make like this: \"make XENO=/path/to/xeno-config\" <"
 	@echo
 endif
+
+MKDIR = mkdir -p
 
 #compiler
 CC=$(shell $(XENOCONFIG) --cc)
@@ -47,20 +52,36 @@ $(GUI):
 $(EXECUTABLE): $(OBJS) $(INCLUDE_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-$(INCLUDE_OBJ_DIR)/%.o: $(INCLUDE_SRC_DIR)/%.c $(INCLUDE_SRC_DIR)/%.h
+#Notice that gain.o depends only on gain.c, as there is no gain.h. The more
+#specific rules wins
+$(OBJ_DIR)/$(EXECUTABLE).o: $(EXECUTABLE).c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-%.o: %.c %.h
+$(OBJ_DIR)/%.o: %.c %.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+$(OBJS): | $(OBJ_DIR)
+
+$(OBJ_DIR): | $(BUILD_DIR)
+
+$(BUILD_DIR):
+	$(MKDIR) $(BUILD_DIR)
+
+$(OBJ_DIR):
+	$(MKDIR) $(OBJ_DIR)
+
+$(INCLUDE_OBJ_DIR)/%.o: $(INCLUDE_SRC_DIR)/%.c $(INCLUDE_SRC_DIR)/%.h
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(INCLUDE_OBJS): | $(INCLUDE_OBJ_DIR)
 
 $(INCLUDE_OBJ_DIR): | $(INCLUDE_BUILD_DIR)
 
 $(INCLUDE_BUILD_DIR):
-	mkdir $(INCLUDE_BUILD_DIR)
+	$(MKDIR) $(INCLUDE_BUILD_DIR)
 
 $(INCLUDE_OBJ_DIR):
-	mkdir $(INCLUDE_OBJ_DIR)
+	$(MKDIR) $(INCLUDE_OBJ_DIR)
 
 .PHONY : clean cleanall
 clean::
