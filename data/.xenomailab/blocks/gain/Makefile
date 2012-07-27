@@ -9,4 +9,4 @@ INCLUDES=#sources in ~/.xenomailab/include
 MY_CFLAGS=#compiler e.g. -Werror
 MY_LDFLAGS=#linking e.g. -lparapin
 
-include ../../include/Makefile
+include ../../include/global.mk
