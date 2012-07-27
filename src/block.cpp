@@ -216,6 +216,8 @@ ProcessResult Block::make(void)
 
     result.name=name();
 
+    arguments << "-j2";
+
     qDebug() << "Executing" << program << arguments
              << "@" << d_path;
 
