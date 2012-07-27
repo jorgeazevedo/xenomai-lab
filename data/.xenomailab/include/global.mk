@@ -37,10 +37,13 @@ LDFLAGS=-Xlinker -rpath -Xlinker $(shell $(XENOCONFIG) --libdir)
 LDFLAGS+=$(shell $(XENOCONFIG) --skin=native --ldflags)
 LDFLAGS+=-lm $(MY_LDFLAGS)
 
+.PHONY : all
+
 all: $(EXECUTABLE) $(GUI)
+	cd $(SETTINGS_PROJECT_PATH); qmake master.pro && make
 
 $(GUI):
-	cd $(SETTINGS_PROJECT_PATH); qmake && make
+	cd $(SETTINGS_PROJECT_PATH); qmake master.pro && make
 
 $(EXECUTABLE): $(OBJS) $(INCLUDE_OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
@@ -63,9 +66,8 @@ $(INCLUDE_OBJ_DIR):
 .PHONY : clean cleanall
 clean::
 	$(RM) $(OBJS) $(INCLUDE_OBJS)
-	cd $(SETTINGS_PROJECT_PATH); qmake && make clean
+	cd $(SETTINGS_PROJECT_PATH); qmake master.pro && make clean
 
 cleanall: clean
-	$(RM) -r $(INCLUDE_BUILD_DIR)
 	$(RM) $(EXECUTABLE)
 
