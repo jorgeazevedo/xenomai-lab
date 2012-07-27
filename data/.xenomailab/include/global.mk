@@ -69,4 +69,8 @@ clean::
 
 cleanall: clean
 	$(RM) $(EXECUTABLE)
-
+	$(RM) $(GUI)
+	$(RM) -r $(SETTINGS_PROJECT_PATH)/build
+	$(RM) $(SETTINGS_PROJECT_PATH)/Makefile*
+	$(RM) -r $(INCLUDE_SRC_DIR)/build
+	$(RM) $(INCLUDE_SRC_DIR)/Makefile*

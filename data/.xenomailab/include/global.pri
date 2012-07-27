@@ -1,8 +1,6 @@
 QT       += core gui
 TEMPLATE = app
 
-CLEAN_FILES += ${TARGET}
-
 # Xenomai has a variable called signals.
 CONFIG += no_keywords
 
