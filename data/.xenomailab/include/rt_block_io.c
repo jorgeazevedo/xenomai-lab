@@ -148,16 +148,13 @@ void finalize_block(){
 	
 	func_try(
 		rt_task_delete(&loop_task),
-		"rt_task_deleteLoop");
-
-	func_try(
-		rt_task_delete(&main_task),
-		"rt_task_deleteTask");
+		"rt_task_delete-Loop");
 
 	DEBUG("Terminated\n");
 }
 
 void func_try(int ret, char*func){
+
 	DEBUG("%s\n",func);
 	switch(ret){
 		case 0://sucess!
@@ -180,8 +177,10 @@ void func_try(int ret, char*func){
 		case -EWOULDBLOCK:
 			ERROR("-EWOULDBLOCK\n");
 		default:
-			ERROR("Failed with unknown error (%d)!\n",ret);
+			DEBUG("Returned unknown error (%d)!\n",ret);
+
 	}
+
 }
 
 void start_task(int priority, void* task_function){
