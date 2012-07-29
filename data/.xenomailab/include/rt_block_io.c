@@ -135,13 +135,13 @@ void initialize_block(int argc, char* argv[],size_t struct_size, int min_inputs,
 	create_io();
 
         if(load_settings(io.config_file,struct_size))
-            ERROR("load_settings has failed");
+            ERROR("load_settings has failed\n");
 }
 
 void finalize_block(){
 
         if(save_settings(io.config_file))
-            ERROR("save_settings has failed");
+            ERROR("save_settings has failed\n");
 
 	free_args();
 	free_io();
@@ -847,7 +847,7 @@ int load_settings(char * config_file,size_t size){
 	buf[i]='\0';
 
         if(register_mutex(&gs_mtx,buf))
-            RETERROR("register_mutex has failed");
+            RETERROR("register_mutex has failed\n");
 
 	//We either created a shm, or binded.
 	//If we created, gs is empty and we need to load it
