@@ -52,7 +52,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setSettings()
 {
-    newEntry("Sampling Period:",&gs->sampling_period);
+    newEntry("Sampling Period (us):",&gs->sampling_period);
 }
 
 
