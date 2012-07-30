@@ -73,6 +73,7 @@ int feenableexcept(int excepts);
 //the default is around ~63 if Matrix is 8x8)
 #define STACK_SIZE_IN_MATRIX_MUL 120
 #define MAX_NUM_INPUTS 10
+#define MAX_DEBUG_QUEUE_LENGTH 10
 
 #ifdef __cplusplus
 extern "C"
@@ -83,7 +84,7 @@ struct ioelements
 {
         //For actual access
         RT_PIPE *output_pipes;
-        RT_QUEUE *input_queues,*output_queues;
+        RT_QUEUE *input_queues,*output_queues,*debug_queue;
 
         //Names, count and init values
         char** input_strings,**output_strings,
@@ -101,8 +102,21 @@ struct ioelements
         char *block_name;
 };
 
+struct debugframe
+{
+	char block_name[100];
+	unsigned long long start_time;
+	unsigned long long end_time;
+	Matrix output;
+	Matrix input[MAX_NUM_INPUTS];
+	char input_name[MAX_NUM_INPUTS][100];
+	unsigned short input_num;
+};
+
 
 extern struct ioelements io;
+
+extern struct debugframe df;
 
 extern int settings_owner;
 extern RT_HEAP settings_heap;
