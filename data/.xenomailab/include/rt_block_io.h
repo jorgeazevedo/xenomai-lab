@@ -72,6 +72,7 @@ int feenableexcept(int excepts);
 #define MAX_MESSAGE_LENGTH 1
 //the default is around ~63 if Matrix is 8x8)
 #define STACK_SIZE_IN_MATRIX_MUL 120
+#define MAX_NUM_INPUTS 10
 
 #ifdef __cplusplus
 extern "C"
@@ -91,8 +92,8 @@ struct ioelements
 	Matrix* input_init,*output_init;
 
         //These hold the inputs
-        Matrix input_result[10];
-        Matrix inputp_result[10];
+        Matrix input_result[MAX_NUM_INPUTS];
+        Matrix inputp_result[MAX_NUM_INPUTS];
 
         //configuration file
         char *config_file;
