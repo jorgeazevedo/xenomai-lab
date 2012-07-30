@@ -425,7 +425,7 @@ void create_io(void){
 
 
 	Matrix init_value;
-	init_value=empty_matrix(1,1);
+	init_value=new_matrix("[-1234.56]");
 
         io.input_queues=(RT_QUEUE*)safe_malloc(io.input_num*sizeof(RT_QUEUE));
         for(i=0;i<io.input_num;i++){

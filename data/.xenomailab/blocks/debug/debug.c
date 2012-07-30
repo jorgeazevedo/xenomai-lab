@@ -20,6 +20,10 @@
 
 #include "debug_settings.h"
 
+#define LOG(...) DEBUG(__VA_ARGS__),fprintf(log,__VA_ARGS__)
+
+FILE* log;
+
 Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	char buf[CHAR_BUFFER_SIZE];
 	struct debugframe temp;
@@ -37,35 +41,44 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 		if(!epoch)
 			epoch = temp.start_time;
 
-		DEBUG("**Block: %s\n",temp.block_name);
+		LOG("**Block: %s\n",temp.block_name);
 
-		DEBUG("start: %llu.%06llu ms\n",
+		LOG("start: %llu.%06llu ms\n",
 		      (temp.start_time - epoch) / 1000,
 		      (temp.start_time - epoch) % 1000);
-		DEBUG("end  : %llu.%06llu ms\n",
+		LOG("end  : %llu.%06llu ms\n",
 		      (temp.end_time - epoch) / 1000,
 		      (temp.end_time - epoch) % 1000);
 
-		matrix_string(&temp.output, &buf);
-		DEBUG("Output  : %s\n",buf);
-		DEBUG("Inputs : %d\n",temp.input_num);
-		for(i=0;i<temp.input_num;i++)
+		LOG("Inputs : %d\n",temp.input_num);
+		for(i=0;i<temp.input_num;i++){
 			matrix_print_pretty(&temp.input[i],temp.input_name[i],NULL);
+			
+			matrix_string(&temp.input[i], &buf);
+			fprintf(log,"%s:%s\n",temp.input_name[i],buf);
+		}
+
+		matrix_string(&temp.output, &buf);
+		LOG("Output  : %s\n",buf);
 	}
 }
 
+
+
 void loop(void *arg){
 
-	/*
-	 * Insert initialization code here.
-	 * e.g. open a file.
-	 */
+        char buf[CHAR_BUFFER_SIZE];
+
+        sprintf(buf,"%s%s",getenv("HOME"),"/.xenomailab/workspace/debug.log");
+
+	if((log=fopen(buf, "w")) == NULL)
+		ERROR("Failed open %s to write!\n",buf);
 
 	while (running) {
 		read_inputs();
 		
-		DEBUG("***************************\n");
-		DEBUG("**********TICK# %d\n",(int)io.input_result[0].matrix[0][0]);
+		LOG("***************************\n");
+		LOG("**********TICK# %d\n",(int)io.input_result[0].matrix[0][0]);
 		
 		periodic_function(io.input_result,io.input_num);
 
@@ -73,10 +86,7 @@ void loop(void *arg){
 
 	}
 
-	/*
-	 * Insert finalization code here
-	 * e.g. close a file.
-	 */
+	fclose(log);
 }
 
 int main(int argc, char* argv[]){
