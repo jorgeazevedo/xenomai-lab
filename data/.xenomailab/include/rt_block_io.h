@@ -138,7 +138,7 @@ void finalize_block();
 
 void wait_for_task_end();
 void start_task(int priority, void* task_function);
-void func_try(int ret, char*func);
+int func_try(int ret, char*func);
 
 void* safe_malloc(int bytes);
 

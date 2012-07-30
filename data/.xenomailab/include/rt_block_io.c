@@ -153,7 +153,7 @@ void finalize_block(){
 	DEBUG("Terminated\n");
 }
 
-void func_try(int ret, char*func){
+int func_try(int ret, char*func){
 
 	DEBUG("%s\n",func);
 	switch(ret){
@@ -181,6 +181,7 @@ void func_try(int ret, char*func){
 
 	}
 
+	return ret;
 }
 
 void start_task(int priority, void* task_function){
