@@ -421,8 +421,8 @@ void assert_io_min(int min_input, int min_output)
 
 void create_io(void){
         int i;
-        //double init_value=0.0;
-	//PROPOSED:
+
+
 	Matrix init_value;
 	init_value=empty_matrix(1,1);
 
@@ -481,10 +481,7 @@ void read_inputs(){
 
 	read_input_queues();
 
-	/*
-	 * After this read_input_queues we want the settings
-	 * to be "static"
-	 */
+	//After this read_input_queues we want the settings to be "static"
 	settings_lock(&gs_mtx);
 }
 
