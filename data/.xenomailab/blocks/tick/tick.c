@@ -41,8 +41,16 @@ void loop(void *arg){
 
 	while(running){
 		rt_task_wait_period(NULL);
+		
+		debug_get_start_time();
+		//XL forces this block to have inputs,
+		//so we force the count to zero to ignore it
+		io.input_num = 0;
+		debug_store_inputs();
 
 		write_output_queues(&outputMatrix);
+		debug_write_queue();
+		outputMatrix.matrix[0][0]++;
 
 		//Change period if changed in GUI
 		if(*current_period!=gs->sampling_period*1000){
