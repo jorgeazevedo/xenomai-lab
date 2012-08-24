@@ -45,10 +45,10 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 
 		LOG("\nBlock name   : %s\n",temp.block_name);
 
-		LOG("Start        : %llu.%06llu ms\n",
+		LOG("Start        : %llu.%06llu us\n",
 		      (temp.start_time - epoch) / 1000,
 		      (temp.start_time - epoch) % 1000);
-		LOG("End          : %llu.%06llu ms\n",
+		LOG("End          : %llu.%06llu us\n",
 		      (temp.end_time - epoch) / 1000,
 		      (temp.end_time - epoch) % 1000);
 		
