@@ -19,6 +19,7 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
+#include <QThread>
 #include <QObject>
 #include <QProcess>
 #include "macros.h"
@@ -27,6 +28,16 @@
 class Block : public QObject
 {
     Q_OBJECT
+
+private:
+    class ProcessKiller : public QThread {
+    public:
+        ProcessKiller(QProcess* p) : process(p){}
+        void run();
+    private:
+        QProcess* process;
+    };
+
 public:
 
     enum Process
@@ -81,6 +92,7 @@ signals:
        void procFinished(int,QProcess::ExitStatus, enum Process);
        void procFailed(QString,QProcess::ProcessError);
 
+       void killProcess();
 private:
 
     static QString d_textEditor;
@@ -97,6 +109,7 @@ private:
     bool d_rt;
     bool d_execInTerm;
     bool d_execAsSudo;
+    ProcessKiller* d_killer;
     QProcess *d_execProcess;
     QProcess *d_makeProcess;
     QProcess *d_cleanProcess;

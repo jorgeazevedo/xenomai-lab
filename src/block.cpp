@@ -38,6 +38,13 @@ Block::Block(QString type, QString name, bool RT) :
     d_execProcess = new QProcess();
     connect(d_execProcess, SIGNAL(error(QProcess::ProcessError)),
             this, SLOT(processError(QProcess::ProcessError)) );
+    connect(d_execProcess, SIGNAL(finished(int,QProcess::ExitStatus)),
+            this, SLOT(processFinished(int,QProcess::ExitStatus)));
+
+    d_killer = new ProcessKiller(d_execProcess);
+    connect(this, SIGNAL(killProcess()),
+            d_killer, SLOT(start()),Qt::QueuedConnection);
+
     d_makeProcess = new QProcess();
     d_cleanProcess = new QProcess();
     d_editProcess = new QProcess();
@@ -53,6 +60,7 @@ Block::~Block()
     delete d_cleanProcess;
     delete d_editProcess;
     delete d_settingsProcess;
+    delete d_killer;
 
 }
 
@@ -346,6 +354,25 @@ ProcessResult Block::terminalExec()
     return result;
 }
 
+/**
+ * Send sigterm, give it a second then kill.
+ * Note: we cannot call proces->waitForFinished
+ * from this context.
+ */
+
+void Block::ProcessKiller::run()
+{
+    if(process->state()!=QProcess::NotRunning){
+         process->terminate();
+
+         sleep(2);
+
+         if(process->state()!=QProcess::NotRunning)
+            process->kill();
+     }
+}
+
+
 /*
  * If process is starting or running
  * try to send SIGTERM by calling terminate
@@ -361,15 +388,9 @@ ProcessResult Block::kill()
 
     qDebug() << "Kill" << d_name;
 
-    if(d_execProcess->state()!=QProcess::NotRunning){
-        //send sigterm
-        d_execProcess->terminate();
-        //give it two seconds, then SIGKILL
-        //(equal to kill -9 <process>)
-        if(!d_execProcess->waitForFinished(2000))
-            d_execProcess->kill();
-
-    }
+    //this differs d_killer->start() to a more convenient time
+    //which then runs Block::ProcessKiller::run()
+    emit killProcess();
 
     return result;
 }
@@ -421,7 +442,6 @@ ProcessResult Block::settings()
     result.name=program;
 
     arguments << d_workspace+"/"+d_name;
-
     qDebug() << "Executing" << program << arguments
              << "@" << d_path;;
 
@@ -447,7 +467,8 @@ ProcessResult Block::settings()
 
 }
 
-void Block::processFinished(int ret,QProcess::ExitStatus status){
+void Block::processFinished(int ret,QProcess::ExitStatus status)
+{
     enum Process p=Clean; //avoid warning
 
     if(QObject::sender()==d_cleanProcess)
@@ -457,22 +478,21 @@ void Block::processFinished(int ret,QProcess::ExitStatus status){
     else if(QObject::sender()==d_execProcess)
         p=Exec;
 
-
     switch(p){
         case Clean:
-            qDebug() << "Clean exited!";
+            qDebug() << d_name << " -make  clean exited with no errors";
             break;
         case Make:
-            qDebug() << "Make exited";
+            qDebug() << d_name << " - make exited :";
+            qDebug() << d_makeProcess->readAllStandardOutput();
+            if(ret)
+                qDebug() << d_makeProcess->readAllStandardError();
             break;
         case Exec:
-            qDebug() << "Exec exited";
+            qDebug() << d_name << " - block process exited with code" << ret;
             break;
     }
 
-    qDebug() << d_makeProcess->readAllStandardOutput();
-    if(ret)
-        qDebug() << d_makeProcess->readAllStandardError();
 
     emit procFinished(ret,status,p);
 
