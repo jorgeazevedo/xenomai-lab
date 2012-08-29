@@ -274,8 +274,11 @@ ProcessResult Block::standaloneExec()
 
     d_arg << d_workspace+"/"+d_name;
 
-    qDebug() << "Executing" << program << d_arg
-             << "@" << d_path;
+    QString str, programCall = program;
+    foreach(str, d_arg)
+        programCall += " " + str;
+
+    qDebug() << "Executing " + programCall << "@" << d_path;
 
     d_execProcess->setWorkingDirectory(d_path);
     d_execProcess->setProcessChannelMode(QProcess::MergedChannels);
