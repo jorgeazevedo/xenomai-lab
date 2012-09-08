@@ -15,7 +15,7 @@ VM](http://www.ieeta.pt/xenomailab/XenomaiLab.zip) (1.5GB) instead.
 ### Xenomai
 
 Xenomai Lab needs Xenomai installed on the target system. Xenomai 2.5.5.2 and 
-2.5.6 are known to be supported. To install Xenomai please refer to the [[how-to-page|How to install Xenomai]]
+2.5.6 are known to be supported. To install Xenomai please refer to the [how-to-page](xenomai-lab/wiki/How-to-install-Xenomai)
 or to the official [Xenomai wiki page](http://www.xenomai.org/index.php/Building_Debian_packages).
 
 In addition to this, Xenomai Lab needs non-root real-time access. Instructions
