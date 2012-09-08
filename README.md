@@ -112,20 +112,24 @@ This file contains both the declaration of the `struct` which holds the
 settings, and the declaration of the `gs` variable used to access these settings
 from your code.
 
-    struct global_settings{
-        char aString[40];
-        int anInt;
-        double aDouble;
-        Matrix aMatrix;
+```C
+struct global_settings{
+    char aString[40];
+    int anInt;
+    double aDouble;
+    Matrix aMatrix;
 
-        int task_prio;//Real time task priority (0-99, higher is greater)
-    };
-    extern struct global_settings* gs;
+    int task_prio;//Real time task priority (0-99, higher is greater)
+};
+extern struct global_settings* gs;
+```
 
 Accessing these variables is as straightforward as it seems. To
 print the `aString` variable, the code would be
 
-    printf("aString:%s\n",gs->aString);
+```C
+printf("aString:%s\n",gs->aString);
+```
 
 #### example\_block\_settings.c
 
@@ -138,22 +142,24 @@ is a good practice to use the same name.
 
 Continuing our example
 
-    void load_gs(void){
-        get_string("Operation","aString",gs->aString);
-        get_int("Operation","anInt",&gs->anInt);
-        get_double("Operation","aDouble",&gs->aDouble);
-        get_matrix("Operation","aMatrix",&gs->aMatrix);
+```C
+void load_gs(void){
+    get_string("Operation","aString",gs->aString);
+    get_int("Operation","anInt",&gs->anInt);
+    get_double("Operation","aDouble",&gs->aDouble);
+    get_matrix("Operation","aMatrix",&gs->aMatrix);
 
-        get_int("Task","Priority",&gs->task_prio);
-    }
-    void unload_gs(void){
-        store_string("Operation", "aString", gs->aString);
-        store_int("Operation", "anInt", gs->anInt);
-        store_double("Operation", "aDouble", gs->aDouble);
-        store_matrix("Operation","aMatrix",&gs->aMatrix);
+    get_int("Task","Priority",&gs->task_prio);
+}
+void unload_gs(void){
+    store_string("Operation", "aString", gs->aString);
+    store_int("Operation", "anInt", gs->anInt);
+    store_double("Operation", "aDouble", gs->aDouble);
+    store_matrix("Operation","aMatrix",&gs->aMatrix);
 
-        store_int("Task","Priority",gs->task_prio);
-    }
+    store_int("Task","Priority",gs->task_prio);
+}
+```
 
 #### example\_block\_settings\_proj/example\_block\_settings\_proj/mainwindow.cpp
 
@@ -170,14 +176,15 @@ use a string to allow the user to choose between `/dev/ttyUSB0` or `/dev/ttyUSB1
 
 Continuing with our example
 
-    void MainWindow::setSettings()
-    {
-        newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
-        newEntry("anInt:",&gs->anInt);
-        newEntry("aDouble:",&gs->aDouble);
-        newMatrix("aMatrix:",&gs->aMatrix);
-    }
-
+```C
+void MainWindow::setSettings()
+{
+    newComboBox("aString:",QStringList("Str1") << "Str2" << "Str3",gs->aString);
+    newEntry("anInt:",&gs->anInt);
+    newEntry("aDouble:",&gs->aDouble);
+    newMatrix("aMatrix:",&gs->aMatrix);
+}
+```
 
 ### Using libraries
 
