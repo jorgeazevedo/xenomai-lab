@@ -10,7 +10,7 @@ Installation
 
 Users wanting to bypass the rather complicated Xenomai installation process
 may want to try out the [VirtualBox
-VM](http://www.ieeta.pt/xenomailab/XenomaiLab.zip) (1.5GB) instead.
+VM](http://www.ieeta.pt/xenomailab/XenomaiLab.zip) (1.5GB) instead. See guide [here](http://github.com/jorgeazevedo/xenomai-lab/wiki/How-to-use-the-VM)
 
 ### Xenomai
 
