@@ -90,7 +90,6 @@ struct ioelements
         char** input_strings,**output_strings,
                 **outputp_strings;
         short input_num,output_num,outputp_num;
-	Matrix* input_init,*output_init;
 
         //These hold the inputs
         Matrix input_result[MAX_NUM_INPUTS];

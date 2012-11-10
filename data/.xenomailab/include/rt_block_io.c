@@ -222,9 +222,8 @@ void* safe_malloc(int bytes){
 }
 
 
-int parse_string(char* original_string, short* num, char***string_vector, Matrix** mat_vector){
-	int i,strlen,value=0;
-	char buf[CHAR_BUFFER_SIZE];
+int parse_string(char* original_string, short* num, char***string_vector){
+	int i,strlen=0;
 
         if(original_string[0] == '\0'){
                 *num=0;
@@ -241,53 +240,24 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 
                 //get space for pointer to those strings
                 string_vector[0]=(char**)safe_malloc((*num)*sizeof(char*));
-
-		//reserve space for initializers
-		*mat_vector=(Matrix*)safe_malloc((*num)*sizeof(Matrix));
 		
                 for(i=0;i<*num;i++){
 
                         //ghetto strlen
                         for(strlen=0;(original_string[strlen]!=',')&&
-				     (original_string[strlen]!='\0')&&
-				     (original_string[strlen]!='=');strlen++);
-
-			//if we have init value, mark for processing
-                        if(original_string[strlen]=='=')
-				value=1;
+				     (original_string[strlen]!='\0');strlen++);
 			
                         //terminate string
                         original_string[strlen]='\0';
 
                         //name
                         string_vector[0][i]=(char*)safe_malloc((strlen+1)*sizeof(char));
+
 			//strcp
                         sprintf(string_vector[0][i],"%s",original_string);
 
                         //discard copied string
                         original_string+=strlen+1;
-
-			if(value){
-				//go to next stop condition
-				for(strlen=0;(original_string[strlen]!=',')&&
-					     (original_string[strlen]!='\0');strlen++);
-
-				//terminate string
-				original_string[strlen]='\0';
-
-                        	sprintf(buf,"%s", original_string);
-				//DEBUG("-%d->%s\n",i,buf);
-				if(new_matrix_safe(&mat_vector[0][i],buf))
-					ERROR("Failed to parse given matrix\n");
-				
-				//discard copied string
-				original_string+=strlen+1;
-
-				value=0;
-			}
-			else{
-				mat_vector[0][i]=empty_matrix(1,1);
-			}
 		}
 	}
 
@@ -297,7 +267,6 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 void parse_args(int argc, char* argv[]){
         struct arguments arguments;
         int i,strlen=0;
-	char buf[CHAR_BUFFER_SIZE];
 
         /* Default values. */
         arguments.input_queues = "";
@@ -329,22 +298,20 @@ void parse_args(int argc, char* argv[]){
         DEBUG("Config file is %s\n",io.config_file);
 
         //Process
-	parse_string(arguments.input_queues,&io.input_num,&io.input_strings,&io.input_init);
+	parse_string(arguments.input_queues,&io.input_num,&io.input_strings);
 
 	DEBUG("Input queues:\n");
         for(i=0;i<io.input_num;i++){
-		matrix_string(io.input_init+i,buf);
-                DEBUG("%d - %s with value %s\n",i,io.input_strings[i],buf);
+                DEBUG("%d - %s\n",i,io.input_strings[i]);
 	}
 	if(i==0)
 		DEBUG("None!\n");
 
-	parse_string(arguments.output_queues,&io.output_num,&io.output_strings,&io.output_init);
+	parse_string(arguments.output_queues,&io.output_num,&io.output_strings);
 
 	DEBUG("Output queues\n");
         for(i=0;i<io.output_num;i++){
-		matrix_string(io.output_init+i,buf);
-                DEBUG("%d - %s with value %s\n",i,io.output_strings[i],buf);
+                DEBUG("%d - %s\n",i,io.output_strings[i]);
 	}
 	if(i==0)
 		DEBUG("None!\n");
