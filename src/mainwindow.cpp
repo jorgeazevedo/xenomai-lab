@@ -361,7 +361,7 @@ void MainWindow::loadLine(const SuperLine& line)
 void MainWindow::insertLine(DiagramItem *startItem, DiagramItem *endItem)
 {
     QString linePathName=askForLineName();
-    QString linePathValue=askForLineValue();
+    QString linePathValue("[0]");
 
     //if user canceled
     if(linePathName.isEmpty())
@@ -432,31 +432,6 @@ QString MainWindow::askForLineName()
                 errorMessage("askForLineName","Names can only contain up tp 16 letters, numbers and the characters '-' and '_'");
                 text="";
             }
-        }
-    }
-    return text;
-}
-
-QString MainWindow::askForLineValue()
-{
-    bool ok;
-    QString text;
-    while(ok && text.isEmpty()){
-
-        text = QInputDialog::getText(this, tr("New FIFO"),
-                                     tr("Initial Value:"), QLineEdit::Normal,
-                                     "[0]", &ok);
-        if (ok && !text.isEmpty()){
-
-            //try to add to BlockDiagram, is fail, ask again
-            if(!Line::isValidInitValue(text)){
-                QMessageBox::critical(this, tr("Bad value"),
-                                               tr("The Matrix you've entered is invalid"),
-                                               QMessageBox::Ok);
-                text="";
-            }
-            else
-                break;
         }
     }
     return text;

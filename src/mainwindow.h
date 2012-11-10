@@ -87,7 +87,6 @@ private slots:
     void loadLine(const SuperLine& line);
     void loadBlock(const SuperBlock& newBlock);
     QString askForLineName();
-    QString askForLineValue();
     bool elementAlreadyExists(const QString& line);
 
     void selectedItemChanged(DiagramItem*,bool);
