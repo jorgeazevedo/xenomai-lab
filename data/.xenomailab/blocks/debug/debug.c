@@ -20,9 +20,9 @@
 
 #include "debug_settings.h"
 
-#define LOG(...) DEBUG(__VA_ARGS__),fprintf(log,__VA_ARGS__)
+#define LOG(...) printf(__VA_ARGS__),fprintf(log,__VA_ARGS__)
 
-#define MAX_TICKS 20
+#define MAX_TICKS 2000
 
 FILE* log;
 
@@ -43,19 +43,16 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 		if(!epoch)
 			epoch = temp.start_time;
 
-		LOG("\nBlock name   : %s\n",temp.block_name);
+		LOG("\nBlock name          : %s\n",temp.config_file);
+		LOG("Block type          : %s\n",temp.block_name);
 
-		LOG("Start        : %llu.%06llu us\n",
+		LOG("Start               : %llu.%06llu us\n",
 		      (temp.start_time - epoch) / 1000,
 		      (temp.start_time - epoch) % 1000);
-		LOG("End          : %llu.%06llu us\n",
+		LOG("End                 : %llu.%06llu us\n",
 		      (temp.end_time - epoch) / 1000,
 		      (temp.end_time - epoch) % 1000);
-		
-		matrix_string(&temp.output, &buf);
-		LOG("Output       : %s\n",buf);
-
-		LOG("Inputs       : %d\n",temp.input_num);
+		LOG("Inputs              : %d\n",temp.input_num);
 		for(i=0;i<temp.input_num;i++){
 			matrix_print_pretty(&temp.input[i],temp.input_name[i],NULL);
 			
@@ -63,6 +60,8 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 			fprintf(log,"- %-11s: %s\n",temp.input_name[i],buf);
 		}
 
+		matrix_string(&temp.output, &buf);
+		LOG("Output              : %s\n",buf);
 	}
 }
 
