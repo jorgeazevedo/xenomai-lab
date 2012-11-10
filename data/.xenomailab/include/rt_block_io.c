@@ -485,21 +485,11 @@ void inline debug_store_output(Matrix * output){
 }
 
 void debug_write_queue(){
-	//char buf[150];
-	//static int i=0;
-	//int strlen;
-        //sprintf(buf,"%s%d","This is tick number ",i);
-	//DEBUG("Buf is %s\n",buf);
-	////ghetto strlen
-	//for(strlen=0;buf[strlen]!='\0';strlen++);
-	//i++;
-
-	//sprintf(&df.block_name,"%s",io.block_name);	
 	str2vec(df.block_name,io.block_name);
 	str2vec(df.config_file,io.config_file);
 
 	df.input_num = io.input_num;	
-	DEBUG("s_t: %llu; e_d:%llu\n bn:%s, out:%4.0f, in:%4.0f, num:%d\n",df.start_time,df.end_time,df.block_name,df.output.matrix[0][0], df.input[0].matrix[0][0],df.input_num);
+//	DEBUG("s_t: %llu; e_d:%llu\n bn:%s, out:%4.0f, in:%4.0f, num:%d\n",df.start_time,df.end_time,df.block_name,df.output.matrix[0][0], df.input[0].matrix[0][0],df.input_num);
 	switch(rt_queue_write(io.debug_queue,&df,sizeof(df),Q_NORMAL)){
 		case -EINVAL:
 			DEBUG("%s queue does not exist!\n","debug");
