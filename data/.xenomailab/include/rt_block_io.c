@@ -496,6 +496,7 @@ void debug_write_queue(){
 
 	//sprintf(&df.block_name,"%s",io.block_name);	
 	str2vec(df.block_name,io.block_name);
+	str2vec(df.config_file,io.config_file);
 
 	df.input_num = io.input_num;	
 	DEBUG("s_t: %llu; e_d:%llu\n bn:%s, out:%4.0f, in:%4.0f, num:%d\n",df.start_time,df.end_time,df.block_name,df.output.matrix[0][0], df.input[0].matrix[0][0],df.input_num);

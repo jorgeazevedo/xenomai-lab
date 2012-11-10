@@ -104,6 +104,7 @@ struct ioelements
 struct debugframe
 {
 	char block_name[100];
+	char config_file[100];
 	unsigned long long start_time;
 	unsigned long long end_time;
 	Matrix output;
