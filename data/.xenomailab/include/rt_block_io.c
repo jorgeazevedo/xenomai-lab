@@ -423,10 +423,6 @@ void assert_io_min(int min_input, int min_output)
 void create_io(void){
         int i;
 
-
-	Matrix init_value;
-	init_value=new_matrix("[-1234.56]");
-
         io.input_queues=(RT_QUEUE*)safe_malloc(io.input_num*sizeof(RT_QUEUE));
         for(i=0;i<io.input_num;i++){
 
@@ -436,7 +432,6 @@ void create_io(void){
                         if(rt_queue_bind(io.input_queues+i,io.input_strings[i],TM_INFINITE))
                                 ERROR("Failed to create bind to queue %s!\n",io.input_strings[i]);
                 }
-                rt_queue_write(io.input_queues+i,&init_value,sizeof(init_value),Q_URGENT);
         }
 
         io.output_queues=(RT_QUEUE*)safe_malloc(io.output_num*sizeof(RT_QUEUE));
@@ -448,7 +443,6 @@ void create_io(void){
                         if(rt_queue_bind(io.output_queues+i,io.output_strings[i],TM_INFINITE))
                                 ERROR("Failed to create and bind to queue %s!\n",io.output_strings[i]);
                 }
-                rt_queue_write(io.output_queues+i,&init_value,sizeof(init_value),Q_URGENT);
         }
 
 
@@ -582,6 +576,12 @@ void read_input_queues()
 			break;
 		case -EIDRM:
 			DEBUG("%s queue has already been deleted! -EIDRM\n",io.input_strings[i]);
+			break;
+		case -ETIMEDOUT:
+			DEBUG("%s: ETIMEDOUT\n",io.input_strings[i]);
+			//now we throw an ERROR() that exits the block
+			//and throws a message for XL to catch
+			ERROR("Deadlock on signal %s!\n",io.input_strings[i]);
 			break;
 		case -EWOULDBLOCK:
 			DEBUG("%s: EWOULDBLOCK\n",io.input_strings[i]);
