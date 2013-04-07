@@ -955,7 +955,7 @@ int save_settings(char* config_file){
 		
                 //If this is called from settings, block name is 0
                 if(io.block_name!=0){
-                    sprintf(buf,"killall %s_settings",io.block_name);
+                    sprintf(buf,"killall %s_settings 2>/dev/null",io.block_name);
                     noWarning=system(buf);
                 }
 
