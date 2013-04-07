@@ -517,38 +517,41 @@ void read_inputs(){
 
 void read_input_queues()
 {
-        short i;
+        int i,ret = 0;
+	static int tick = 1;
 	Matrix sample;
 
-        for(i=0;i<io.input_num;i++){
-                switch(rt_queue_read(io.input_queues+i,&sample,sizeof(sample),1000000000)){
-                //switch(rt_queue_read(io.input_queues+i,&sample,sizeof(sample),TM_INFINITE)){
+        for(i=0;i<io.input_num;i++) {
+                ret = rt_queue_read(io.input_queues+i,&sample,sizeof(sample),1000000000);
+
+                switch(ret) {
 
 		case -EINVAL:
-			/*
-			 * This should happen when rt_queue_read times out. So we change
-			 * running to exit gracefuly
-			 */
-			DEBUG("%s queue does not exist! -EINVAL\n",io.input_strings[i]);
-			running=0;
+			WARNING("The \"%s\" queue has been deleted! Exiting gracefully. (-EINVAL %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+			running = 0;
 			break;
 		case -EIDRM:
-			DEBUG("%s queue has already been deleted! -EIDRM\n",io.input_strings[i]);
+			WARNING("The \"%s\" queue has been deleted! Exiting gracefully. (-EIDRM %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+			running = 0;
 			break;
 		case -ETIMEDOUT:
-			DEBUG("%s: ETIMEDOUT\n",io.input_strings[i]);
-			//now we throw an ERROR() that exits the block
-			//and throws a message for XL to catch
-			ERROR("Deadlock on signal %s!\n",io.input_strings[i]);
+			// Find out why we timed out and act accordingly
+			if(tick == 1) {
+				//Cyclical dependency, most probably
+				ERROR("The \"%s\" queue has timed out on the first try! Cyclical dependency? (-ETIMEDOUT %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+			} else {
+				//Parent has stopped writing to queue
+				WARNING("The \"%s\" queue has timed out! Exiting gracefully. (-ETIMEDOUT %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+				running = 0;
+			}
 			break;
 		case -EWOULDBLOCK:
-			DEBUG("%s: EWOULDBLOCK\n",io.input_strings[i]);
+			WARNING("The \"%s\" queue was empty when I tried to read it. (-EWOULDBLOCK %d %s)\n",io.input_strings[i],ret,strerror(-ret));
 			break;
 		case -EINTR:
-			DEBUG("%s: -EINTR\n",io.input_strings[i]);
+			WARNING("I've been force to wake up while waiting for the \"%s\" queue. (-EINTR %d %s)\n",io.input_strings[i],ret,strerror(-ret));
 			break;
 		default:
-			/* DEBUG("%s: no issues\n",io.input_strings[i]); */
 			io.input_result[i]=sample;
 			break;
 
@@ -556,6 +559,7 @@ void read_input_queues()
 
 	}
 
+	tick++;
 	debug_get_start_time();
 	debug_store_inputs();
 }
