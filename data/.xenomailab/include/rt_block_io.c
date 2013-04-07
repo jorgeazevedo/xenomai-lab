@@ -151,7 +151,7 @@ void finalize_block(){
 		rt_task_delete(&loop_task),
 		"rt_task_delete-Loop");
 
-	DEBUG("Terminated\n");
+	DEBUG("Sucessfully terminated\n");
 }
 
 int func_try(int ret, char*func){
