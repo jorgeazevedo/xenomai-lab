@@ -84,8 +84,9 @@ $(INCLUDE_OBJ_DIR):
 	$(MKDIR) $(INCLUDE_OBJ_DIR)
 
 .PHONY : clean cleanall
-clean::
+clean:
 	$(RM) $(OBJS) $(INCLUDE_OBJS)
+	$(RM) $(SETTINGS_PROJECT_PATH)/Makefile*
 	cd $(SETTINGS_PROJECT_PATH); qmake master.pro && make clean
 
 cleanall: clean
