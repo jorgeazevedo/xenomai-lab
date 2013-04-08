@@ -60,6 +60,8 @@ int feenableexcept(int excepts);
 #define CHAR_BUFFER_SIZE 4096
 //This way we guarantee up to 10 delays (10 init values + 1 sample)
 #define MAX_QUEUE_LENGTH 11
+//Time in ns after which rt_queue_read returnes -ETIMEDOUT
+#define QUEUE_READ_TIMEOUT 1000000000
 //the default is around ~63 if Matrix is 8x8)
 #define STACK_SIZE_IN_MATRIX_MUL 120
 #define MAX_NUM_INPUTS 10

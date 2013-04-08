@@ -522,7 +522,7 @@ void read_input_queues()
 	Matrix sample;
 
         for(i=0;i<io.input_num;i++) {
-                ret = rt_queue_read(io.input_queues+i,&sample,sizeof(sample),1000000000);
+                ret = rt_queue_read(io.input_queues+i,&sample,sizeof(sample),QUEUE_READ_TIMEOUT);
 
                 switch(ret) {
 
