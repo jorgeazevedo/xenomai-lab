@@ -394,7 +394,7 @@ void create_io(void){
         for(i=0;i<io.input_num;i++){
 
                 if(rt_queue_create(io.input_queues+i,io.input_strings[i],
-                sizeof(Matrix),MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
+                sizeof(Matrix),MAX_QUEUE_LENGTH,Q_FIFO|Q_SHARED)){
                         DEBUG("%s already exists, binding\n",io.input_strings[i]);
                         if(rt_queue_bind(io.input_queues+i,io.input_strings[i],TM_INFINITE))
                                 ERROR("Failed to create bind to queue %s!\n",io.input_strings[i]);
@@ -405,7 +405,7 @@ void create_io(void){
         for(i=0;i<io.output_num;i++){
 
                 if(rt_queue_create(io.output_queues+i,io.output_strings[i],
-                sizeof(Matrix),MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
+                MAX_QUEUE_LENGTH*sizeof(Matrix),MAX_QUEUE_LENGTH,Q_FIFO|Q_SHARED)){
                         DEBUG("%s already exists, binding\n",io.output_strings[i]);
                         if(rt_queue_bind(io.output_queues+i,io.output_strings[i],TM_INFINITE))
                                 ERROR("Failed to create and bind to queue %s!\n",io.output_strings[i]);
@@ -577,7 +577,7 @@ void write_output_queues(Matrix* sample)
 
 	for(i=0;i<io.output_num;i++){
 
-		switch(rt_queue_write(io.output_queues+i,sample,sizeof(*sample),Q_URGENT)){
+		switch(rt_queue_write(io.output_queues+i,sample,sizeof(*sample),Q_NORMAL)){
 		//switch(rt_queue_write(io.output_queues+i,&sample,sizeof(sample),Q_NORMAL|Q_BROADCAST)){
 			case -EINVAL:
 				DEBUG("%s queue does not exist!\n",io.output_strings[i]);
