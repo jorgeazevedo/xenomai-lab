@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011  Jorge Azevedo
+ * Copyright (C) 2013  Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -979,7 +979,7 @@ void MainWindow::itemSelected(QGraphicsItem *item)
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Xenomai Lab"),
-                       tr("<b>Xenomai Lab</b> version 0.1 Alpha Squared<BR><BR>Jorge Azevedo (C) 2011<BR>Universidade de Aveiro"));
+                       tr("<b>Xenomai Lab</b> version 0.1 Alpha Squared<BR><BR>Jorge Azevedo (C) 2013<BR>Universidade de Aveiro"));
 }
 //! [20]
 
