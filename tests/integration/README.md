@@ -25,7 +25,7 @@ Run all tests with
 
 To make it quicker, it's possible to compile the blocks manually with
 
-    ./compileBlocks.sh "tick signal_generator sum gain Z debug"
+    ./compileBlocks.sh "tick signal_generator sum gain Z debug display"
 
 Then comment the calls to make, and then run `make check`.
 
