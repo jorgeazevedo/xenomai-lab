@@ -158,6 +158,15 @@ extern RT_TASK main_task;
  */
 extern int running;
 
+/************************************************
+ *  Assorted functions
+ ***********************************************/
+
+void get_task_priority(int *value);
+void stop(int signum);
+void fp_exception(int sig, siginfo_t *siginfo, void *context);
+void* safe_malloc(int bytes);
+
 void initialize_block(int argc, char* argv[],size_t struct_size, int min_inputs,int min_outputs);
 void finalize_block();
 
@@ -165,10 +174,13 @@ void wait_for_task_end();
 void start_task(int priority, void* task_function);
 int func_try(int ret, char*func);
 
-void* safe_malloc(int bytes);
 
 void parse_args(int argc, char* argv[]);
 void free_args(void);
+
+/************************************************
+ *  I/O functions
+ ***********************************************/
 
 void create_io(void);
 void assert_io_min(int min_input, int min_output);
@@ -179,18 +191,29 @@ void read_input_queues();
 void write_outputs(Matrix sample);
 void write_output_queues(Matrix* sample);
 
-int register_mutex(RT_MUTEX* mut, char* name);
-void free_mutex(RT_MUTEX* mut);
+/************************************************
+ *  Shared-memory functions
+ ***********************************************/
 
-// void* create_shm(RT_HEAP* heap, char* heap_name, size_t size);
 void* create_shm(RT_HEAP* heap, char* heap_name, size_t size, int* create);
 void delete_shm(RT_HEAP* heap,void *pointer);
 void* bind_shm(RT_HEAP* heap, char* heap_name,size_t size);
-//void unbind_shm(RT_HEAP* heap, void* pointer);
 void unbind_shm(RT_HEAP* heap);
 
+/************************************************
+ *  Mutex functions
+ ***********************************************/
 
-//these are all relative to settings
+int register_mutex(RT_MUTEX* mut, char* name);
+void free_mutex(RT_MUTEX* mut);
+
+/************************************************
+ *  Settings functions
+ ***********************************************/
+
+void settings_lock(RT_MUTEX* mtx);
+void settings_unlock(RT_MUTEX* mtx);
+
 void get_matrix(char* section, char* key, Matrix* M1);
 void store_matrix(char* section, char* key, Matrix* M1);
 void get_string(char* section, char* key, char* str);
@@ -203,16 +226,7 @@ int load_settings(char* config_file, size_t size);
 int save_settings(char* config_file);
 int update_settings(char* config_file);
 int am_alone(char* heap_name);
-//int save_settings(char* config_file, RT_MUTEX* mtx,int rt_context);
-//PROPOSED:
-//int settings_load(char* config_file, size_t size, int rt_context);
-//int settings_save(char* config_file, int rt_context);
-void settings_lock(RT_MUTEX* mtx);	
-void settings_unlock(RT_MUTEX* mtx);
-void get_task_priority(int *value);
 
-void stop(int signum);
-void fp_exception(int sig, siginfo_t *siginfo, void *context);
 
 /************************************************
  *  Debug functions
