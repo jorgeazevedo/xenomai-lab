@@ -214,6 +214,21 @@ void get_task_priority(int *value);
 void stop(int signum);
 void fp_exception(int sig, siginfo_t *siginfo, void *context);
 
+/************************************************
+ *  Debug functions
+ ***********************************************/
+
+/// Gets transfer function start time from rt_timer_read
+void debug_get_start_time(void);
+/// Stores latest input matrices in debug frame
+void debug_store_inputs(void);
+/// Stores output matrix in debug frame
+void inline debug_store_output(Matrix * output);
+/// Gets transfer end time from rt_timer_read
+void inline debug_get_end_time(void);
+/// Writes the debug frame in the debug queue
+void debug_write_queue();
+
 #ifdef __cplusplus
 }
 #endif
