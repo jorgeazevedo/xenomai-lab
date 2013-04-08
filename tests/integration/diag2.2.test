@@ -1,0 +1,46 @@
+#!/bin/bash
+
+echo "Initiating test"
+
+# Prepare test
+blocks="tick signal_generator gain"
+tmpfiles="tick.stdout tick.stderr signal_generator.stdout signal_generator.stderr gain.stdout gain.stderr result.log result.ok"
+source configure.sh
+./compileBlocks.sh "$blocks"
+./initWorkspace.sh "$blocks"
+
+# Run test
+$BLOCKPATH/tick/tick -iroot1 -oroot2 Test/tick 1> tick.stdout 2> tick.stderr &
+$BLOCKPATH/signal_generator/signal_generator -iroot2 -osignal1 Test/signal_generator 1> signal_generator.stdout 2> signal_generator.stderr &
+$BLOCKPATH/gain/gain -isignal1 Test/gain 1> gain.stdout 2> gain.stderr &
+
+sleep 2
+pid=$(pidof tick)
+kill -9 $pid
+sleep 2
+
+# Assemble result.log
+rm -rf result.log
+for block in $blocks
+do
+	tail -n1 $block.stdout >> result.log
+	cat $block.stderr >> result.log
+done
+
+cat <<EOF >result.ok
+          start_task: 	tick loop about to start
+      finalize_block: 	Successfully terminated
+W: read_input_queues: The "root2" queue has timed out! Exiting gracefully. (-ETIMEDOUT -110 Connection timed out)
+      finalize_block: 	Successfully terminated
+W: read_input_queues: The "signal1" queue has timed out! Exiting gracefully. (-ETIMEDOUT -110 Connection timed out)
+EOF
+
+diff result.ok result.log
+result=$?
+
+cat result.log
+
+# Clean up
+./cleanupWorkspace.sh "$tmpfiles"
+
+exit $result
