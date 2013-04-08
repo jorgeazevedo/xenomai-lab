@@ -67,6 +67,24 @@ int feenableexcept(int excepts);
 #define MAX_NUM_INPUTS 10
 #define MAX_DEBUG_QUEUE_LENGTH 50
 
+//This encapsulates all the standard block boilerplate code
+#define STD_BLOCK_MAIN()\
+void loop(void *arg){\
+	init();\
+	while (running) {\
+		read_inputs();\
+		write_outputs(transfer_function(io.input_result,io.input_num));\
+	}\
+	cleanup();\
+}\
+int main(int argc, char* argv[]){\
+	initialize_block(argc,argv,sizeof(struct global_settings),1,0);\
+	start_task(gs->task_prio,&loop);\
+	wait_for_task_end();\
+	finalize_block();\
+	return 0;\
+}\
+
 #ifdef __cplusplus
 extern "C"
 {

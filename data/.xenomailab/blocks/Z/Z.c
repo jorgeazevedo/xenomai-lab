@@ -16,48 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-
 #include "Z_settings.h"
 
 void init() {
 	Matrix init_value = new_matrix("[8]");
 	int i;
+	int delays = gs->N;
 
-	for(i=0;i < gs->N;i++)
+	for(i=0;i < delays;i++)
 		write_output_queues(&init_value);
 }
 
-Matrix periodic_function(Matrix* input_channel,short num_channels){
+Matrix transfer_function(Matrix* input_channel,short num_channels) {
 
 	return *input_channel;
 }
 
-
-void loop(void *arg){
-	Matrix outputMatrix;
-
-	init();
-
-	while (running) {
-		read_inputs();
-		
-		outputMatrix=periodic_function(io.input_result,io.input_num);
-
-		write_outputs(outputMatrix);
-
-	}
+void cleanup() {
 }
 
-int main(int argc, char* argv[]){
-
-	initialize_block(argc,argv,sizeof(struct global_settings),1,0);
-
-	start_task(gs->task_prio,&loop);
-
-	wait_for_task_end();
-	
-	finalize_block();
-
-	return 0;
-}
+STD_BLOCK_MAIN()
