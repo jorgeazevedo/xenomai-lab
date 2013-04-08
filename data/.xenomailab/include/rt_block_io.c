@@ -458,11 +458,11 @@ void str2vec(char dest[], const char* src)
 	dest[i]='\0';
 }
 
-void inline debug_get_start_time(void){
+inline void debug_get_start_time(void){
 	df.start_time = (unsigned long long) rt_timer_read();
 }
 
-void inline debug_store_inputs(void){
+inline void debug_store_inputs(void){
 
 	int i;
 
@@ -476,11 +476,11 @@ void inline debug_store_inputs(void){
 
 }
 
-void inline debug_get_end_time(void){
+inline void debug_get_end_time(void){
 	df.end_time = (unsigned long long) rt_timer_read();
 }
 
-void inline debug_store_output(Matrix * output){
+inline void debug_store_output(Matrix * output){
 	df.output = *output;
 }
 
