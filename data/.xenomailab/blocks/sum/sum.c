@@ -20,24 +20,27 @@
 
 #include "sum_settings.h"
 
-Matrix periodic_function(Matrix* inputChannel,short numChannels){
+void init() {
+}
+
+Matrix transfer_function(Matrix* input_channel,short num_channels) {
 	Matrix ret=empty_matrix(1,1);
 	Matrix temp=empty_matrix(1,1);
 	int i=0;
 
-	temp=matrix_mul_double(&inputChannel[0], gs->Ch0Gain);
+	temp=matrix_mul_double(&input_channel[0], gs->Ch0Gain);
 	ret=matrix_sum(&ret,&temp);
 
-	if(numChannels>=2){
-		temp=matrix_mul_double(&inputChannel[1], gs->Ch1Gain);
+	if(num_channels>=2){
+		temp=matrix_mul_double(&input_channel[1], gs->Ch1Gain);
 		ret=matrix_sum(&ret,&temp);
 
-		if(numChannels>=3){
-			temp=matrix_mul_double(&inputChannel[2], gs->Ch2Gain);
+		if(num_channels>=3){
+			temp=matrix_mul_double(&input_channel[2], gs->Ch2Gain);
 			ret=matrix_sum(&ret,&temp);
 
-			for(i=3;i<numChannels;i++){
-				ret=matrix_sum(&ret,&inputChannel[i]);
+			for(i=3;i<num_channels;i++){
+				ret=matrix_sum(&ret,&input_channel[i]);
 			}
 		}
 	}
@@ -47,38 +50,7 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	return ret;
 }
 
-void loop(void *arg){
-	Matrix outputMatrix;
-
-	/*
-	 * Insert initialization code here.
-	 * e.g. open a file.
-	 */
-
-	while (running) {
-		read_inputs();
-		
-		outputMatrix=periodic_function(io.input_result,io.input_num);
-
-		write_outputs(outputMatrix);
-
-	}
-
-	/*
-	 * Insert finalization code here
-	 * e.g. close a file.
-	 */
+void cleanup() {
 }
 
-int main(int argc, char* argv[]){
-
-	initialize_block(argc,argv,sizeof(struct global_settings),1,0);
-
-	start_task(gs->task_prio,&loop);
-
-	wait_for_task_end();
-	
-	finalize_block();
-
-	return 0;
-}
+STD_BLOCK_MAIN()

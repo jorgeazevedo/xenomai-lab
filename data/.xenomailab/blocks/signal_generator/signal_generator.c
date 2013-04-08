@@ -22,8 +22,15 @@
 #include "signal_generator_settings.h"
 
 long* current_period;
+RT_HEAP sampling_heap;
 
-Matrix periodic_function(Matrix* inputChannel,short numChannels){
+void init() {
+	current_period=bind_shm(&sampling_heap,"tickPeriod",sizeof(long));
+	
+	DEBUG("Outputing a %s wave of amplitude %4.2f, freq %4.2f, duty %4.2f, dc %4.2f\n",gs->wave,gs->wave_amp,gs->wave_freq,gs->wave_duty,gs->wave_dc);
+}
+
+Matrix transfer_function(Matrix* input_channel,short num_channels) {
 	Matrix ret=empty_matrix(1,1);
 	double sample;
 	static int n=0;
@@ -66,35 +73,8 @@ Matrix periodic_function(Matrix* inputChannel,short numChannels){
 	return ret;
 }
 
-void loop(void *arg)
-{
-	RT_HEAP sampling_heap;
-	current_period=bind_shm(&sampling_heap,"tickPeriod",sizeof(long));
-	
-	Matrix outputMatrix=empty_matrix(1,1);
-	DEBUG("Outputing a %s wave of amplitude %4.2f, freq %4.2f, duty %4.2f, dc %4.2f\n",gs->wave,gs->wave_amp,gs->wave_freq,gs->wave_duty,gs->wave_dc);
-
-	while (running) {
-		read_inputs();
-		
-		outputMatrix=periodic_function(io.input_result,io.input_num);
-
-		write_outputs(outputMatrix);
-
-	}
-
+void cleanup() {
 	unbind_shm(&sampling_heap);
 }
 
-int main(int argc, char* argv[]){
-
-	initialize_block(argc,argv,sizeof(struct global_settings),1,0);
-
-	start_task(gs->task_prio,&loop);
-
-	wait_for_task_end();
-	
-	finalize_block();
-
-	return 0;
-}
+STD_BLOCK_MAIN()

@@ -20,51 +20,31 @@
 
 #include "template_settings.h"
 
-Matrix periodic_function(Matrix* inputChannel,short numChannels){
-	Matrix ret=empty_matrix(1,1);
+/*
+ * Insert initialization code here.
+ * e.g. open a file.
+ */
+void init() {
+}
 
-	/*
-	 * Insert periodic code here.
-	 */
+/*
+ * Insert main function here.
+ */
+Matrix transfer_function(Matrix* input_channel, short num_channels){
+	Matrix ret = empty_matrix(1,1);
 	
 	//Default operation: apply -1 gain
-	ret=matrix_mul_double(&inputChannel[0], -1);
+	ret = matrix_mul_double(&input_channel[0], -1);
 
 	return ret;
 }
 
-void loop(void *arg){
-	Matrix outputMatrix=empty_matrix(1,1);
-
-	/*
-	 * Insert initialization code here.
-	 * e.g. open a file.
-	 */
-
-	while (running) {
-		read_inputs();
-		
-		outputMatrix=periodic_function(io.input_result,io.input_num);
-
-		write_outputs(outputMatrix);
-
-	}
-
-	/*
-	 * Insert finalization code here
-	 * e.g. close a file.
-	 */
+/*
+ * Insert finalization code here
+ * e.g. close a file.
+ */
+void cleanup() {
 }
 
-int main(int argc, char* argv[]){
 
-	initialize_block(argc,argv,sizeof(struct global_settings),1,0);
-
-	start_task(gs->task_prio,&loop);
-
-	wait_for_task_end();
-	
-	finalize_block();
-
-	return 0;
-}
+STD_BLOCK_MAIN()

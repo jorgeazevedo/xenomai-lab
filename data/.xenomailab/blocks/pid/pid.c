@@ -52,36 +52,19 @@ double pid(double input, double Kp, double Td, double Ki)
         return ut;
 }
 
-Matrix periodic_function(Matrix* inputChannel,short numChannels){
-	Matrix ret=empty_matrix(1,1);
+void init() {
+}
 
-        ret.matrix[0][0]=pid(inputChannel[0].matrix[0][0],gs->kp,gs->td,gs->ki);
+Matrix transfer_function(Matrix* input_channel,short num_channels) {
+
+	Matrix ret = empty_matrix(1,1);
+
+        ret.matrix[0][0] = pid(input_channel[0].matrix[0][0], gs->kp, gs->td, gs->ki);
 
 	return ret;
 }
 
-void loop(void *arg){
-	Matrix outputMatrix;
-
-	while (running) {
-		read_inputs();
-		
-		outputMatrix=periodic_function(io.input_result,io.input_num);
-
-		write_outputs(outputMatrix);
-
-	}
+void cleanup() {
 }
 
-int main(int argc, char* argv[]){
-
-	initialize_block(argc,argv,sizeof(struct global_settings),1,0);
-
-	start_task(gs->task_prio,&loop);
-
-	wait_for_task_end();
-	
-	finalize_block();
-
-	return 0;
-}
+STD_BLOCK_MAIN()
