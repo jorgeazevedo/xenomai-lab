@@ -20,36 +20,19 @@
 
 #include "gain_settings.h"
 
-Matrix periodic_function(Matrix* inputChannel,short numChannels){
+void init() {
+}
+
+Matrix transfer_function(Matrix* input_channel,short num_channels) {
+
 	Matrix ret;
 
-	ret=matrix_mul_double(&inputChannel[0], gs->gain);
+	ret = matrix_mul_double(&input_channel[0], gs->gain);
 
 	return ret;
 }
 
-void loop(void *arg){
-	Matrix outputMatrix;
-
-	while (running) {
-		read_inputs();
-		
-		outputMatrix=periodic_function(io.input_result,io.input_num);
-
-		write_outputs(outputMatrix);
-
-	}
+void cleanup() {
 }
 
-int main(int argc, char* argv[]){
-
-	initialize_block(argc,argv,sizeof(struct global_settings),1,0);
-
-	start_task(gs->task_prio,&loop);
-
-	wait_for_task_end();
-	
-	finalize_block();
-
-	return 0;
-}
+STD_BLOCK_MAIN()
