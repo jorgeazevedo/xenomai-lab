@@ -25,7 +25,7 @@ MainWindow::MainWindow(const QString &execName, const QString &name, QWidget *pa
     /*
      * Sets the text for the top half of the dialog.
      */
-    fillDialog("Tick","Timer tick.");
+    fillDialog("Tick","Timer tick. Quits after lifetime ticks have passed. If lifetime is zero will run indefinitely.");
 }
 
 MainWindow::~MainWindow()
@@ -53,6 +53,7 @@ MainWindow::~MainWindow()
 void MainWindow::setSettings()
 {
     newEntry("Sampling Period (us):",&gs->sampling_period);
+    newEntry("Lifetime (ticks)",&gs->lifetime);
 }
 
 

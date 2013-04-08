@@ -29,6 +29,7 @@ extern "C"
 struct global_settings{
 
         int sampling_period;
+        int lifetime;
 
         int task_prio;//Real time task priority (0-99, higher is greater)
 };

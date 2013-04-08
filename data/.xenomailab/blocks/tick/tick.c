@@ -59,6 +59,12 @@ void loop(void *arg){
 				*current_period=SAFEZONE;
 			rt_task_set_periodic(NULL, TM_NOW,*current_period);
 		}
+
+		//If we reached the end of our lifetime, exit gracefully
+		if( (gs->lifetime != 0) &&
+		     (outputMatrix.matrix[0][0] >= gs->lifetime)) {
+			running = 0;
+		}
 	}
 
 	delete_shm(&sampling_heap,current_period);

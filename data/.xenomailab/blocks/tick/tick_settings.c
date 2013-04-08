@@ -28,6 +28,7 @@ RT_MUTEX gs_mtx;
 void load_gs(void){
 
 	get_int("Operation","SamplingPeriod",&gs->sampling_period);
+	get_int("Operation","Lifetime",&gs->lifetime);
 
 	get_int("Task","Priority",&gs->task_prio);
 }
@@ -39,6 +40,7 @@ void load_gs(void){
 void unload_gs(void){
 
 	store_int("Operation","SamplingPeriod",gs->sampling_period);
+	store_int("Operation","Lifetime",gs->lifetime);
 
 	store_int("Task","Priority",gs->task_prio);
 }
