@@ -498,7 +498,7 @@ void debug_write_queue(){
 			DEBUG("%s queue has already been deleted !\n","debug");
 			break;
 		case -ENOMEM:
-			DEBUG("%s queue is full!\n","debug");
+			//DEBUG("%s queue is full!\n","debug");
 			break;
 		default:
 			/* DEBUG("%s written ok\n",io.output_strings[i]); */
