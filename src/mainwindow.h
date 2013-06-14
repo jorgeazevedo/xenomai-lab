@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011  Jorge Azevedo
+ * Copyright (C) 2013  Jorge Azevedo
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,6 @@ private slots:
     void loadLine(const SuperLine& line);
     void loadBlock(const SuperBlock& newBlock);
     QString askForLineName();
-    QString askForLineValue();
     bool elementAlreadyExists(const QString& line);
 
     void selectedItemChanged(DiagramItem*,bool);

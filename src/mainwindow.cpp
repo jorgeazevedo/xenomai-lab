@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011  Jorge Azevedo
+ * Copyright (C) 2013  Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -361,7 +361,7 @@ void MainWindow::loadLine(const SuperLine& line)
 void MainWindow::insertLine(DiagramItem *startItem, DiagramItem *endItem)
 {
     QString linePathName=askForLineName();
-    QString linePathValue=askForLineValue();
+    QString linePathValue("[0]");
 
     //if user canceled
     if(linePathName.isEmpty())
@@ -432,31 +432,6 @@ QString MainWindow::askForLineName()
                 errorMessage("askForLineName","Names can only contain up tp 16 letters, numbers and the characters '-' and '_'");
                 text="";
             }
-        }
-    }
-    return text;
-}
-
-QString MainWindow::askForLineValue()
-{
-    bool ok;
-    QString text;
-    while(ok && text.isEmpty()){
-
-        text = QInputDialog::getText(this, tr("New FIFO"),
-                                     tr("Initial Value:"), QLineEdit::Normal,
-                                     "[0]", &ok);
-        if (ok && !text.isEmpty()){
-
-            //try to add to BlockDiagram, is fail, ask again
-            if(!Line::isValidInitValue(text)){
-                QMessageBox::critical(this, tr("Bad value"),
-                                               tr("The Matrix you've entered is invalid"),
-                                               QMessageBox::Ok);
-                text="";
-            }
-            else
-                break;
         }
     }
     return text;
@@ -1004,7 +979,7 @@ void MainWindow::itemSelected(QGraphicsItem *item)
 void MainWindow::about()
 {
     QMessageBox::about(this, tr("About Xenomai Lab"),
-                       tr("<b>Xenomai Lab</b> version 0.1 Alpha Squared<BR><BR>Jorge Azevedo (C) 2011<BR>Universidade de Aveiro"));
+                       tr("<b>Xenomai Lab</b> version 0.1 Alpha Squared<BR><BR>Jorge Azevedo (C) 2013<BR>Universidade de Aveiro"));
 }
 //! [20]
 

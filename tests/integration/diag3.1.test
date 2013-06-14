@@ -1,0 +1,44 @@
+#!/bin/bash
+
+echo "Initiating test"
+
+# Prepare test
+blocks="tick signal_generator sum"
+tmpfiles="tick.stdout tick.stderr signal_generator.stdout signal_generator.stderr sum.stdout sumstderr result.log result.ok"
+source configure.sh
+./compileBlocks.sh "$blocks"
+./initWorkspace.sh "$blocks"
+
+# Run test
+$BLOCKPATH/tick/tick -iroot1 -oroot2 Test/tick 1> tick.stdout 2> tick.stderr &
+$BLOCKPATH/signal_generator/signal_generator -iroot2 -osignal0 Test/signal_generator 1> signal_generator.stdout 2> signal_generator.stderr &
+$BLOCKPATH/sum/sum -isignal0,signal1 -osignal1 Test/sum 1> sum.stdout 2> sum.stderr
+
+sleep 2
+killall tick
+sleep 2
+
+# Assemble result.log
+rm -rf result.log
+for block in $blocks
+do
+	tail -n1 $block.stdout >> result.log
+	cat $block.stderr >> result.log
+done
+
+cat <<EOF >result.ok
+      finalize_block: 	Successfully terminated
+      finalize_block: 	Successfully terminated
+W: read_input_queues: The "root2" queue has timed out! Exiting gracefully. (-ETIMEDOUT -110 Connection timed out)
+          start_task: 	sum loop about to start
+E: read_input_queues: The "signal1" queue has timed out on the first try! Cyclical dependency? (-ETIMEDOUT -110 Connection timed out)
+EOF
+
+diff result.ok result.log
+result=$?
+
+cat result.log
+# Clean up
+./cleanupWorkspace.sh "$tmpfiles"
+
+exit $result

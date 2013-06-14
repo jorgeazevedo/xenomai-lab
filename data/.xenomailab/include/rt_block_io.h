@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011 Jorge Azevedo
+ * Copyright (C) 2013 Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,24 +54,16 @@ int feenableexcept(int excepts);
 #include "mtrx.h"
 #include "settings.h"
 
-//Useful Macros
-//Commenting this define disables debug messages
-#define DEBUGON
-
-#define ERROR(...) fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__),fprintf(stderr,__VA_ARGS__),fflush(stderr),exit(1)
-#define RETERROR(...) {fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__);fprintf(stderr,__VA_ARGS__);fflush(stderr);return 1;}
-
-#ifdef DEBUGON
-
-        #define DEBUG(...) printf("%20s: \t", __PRETTY_FUNCTION__),printf(__VA_ARGS__)
-#else
-        #define	DEBUG(...)
-#endif
+// DEBUG/WARNING/ERROR macros
+#include "macros.h"
 
 #define CHAR_BUFFER_SIZE 4096
-#define MAX_MESSAGE_LENGTH 1
+//This way we guarantee up to 10 delays (10 init values + 1 sample)
+#define MAX_QUEUE_LENGTH 11
 //the default is around ~63 if Matrix is 8x8)
 #define STACK_SIZE_IN_MATRIX_MUL 120
+#define MAX_NUM_INPUTS 10
+#define MAX_DEBUG_QUEUE_LENGTH 50
 
 #ifdef __cplusplus
 extern "C"
@@ -82,17 +74,16 @@ struct ioelements
 {
         //For actual access
         RT_PIPE *output_pipes;
-        RT_QUEUE *input_queues,*output_queues;
+        RT_QUEUE *input_queues,*output_queues,*debug_queue;
 
         //Names, count and init values
         char** input_strings,**output_strings,
                 **outputp_strings;
         short input_num,output_num,outputp_num;
-	Matrix* input_init,*output_init;
 
         //These hold the inputs
-        Matrix input_result[10];
-        Matrix inputp_result[10];
+        Matrix input_result[MAX_NUM_INPUTS];
+        Matrix inputp_result[MAX_NUM_INPUTS];
 
         //configuration file
         char *config_file;
@@ -100,8 +91,22 @@ struct ioelements
         char *block_name;
 };
 
+struct debugframe
+{
+	char block_name[100];
+	char config_file[100];
+	unsigned long long start_time;
+	unsigned long long end_time;
+	Matrix output;
+	Matrix input[MAX_NUM_INPUTS];
+	char input_name[MAX_NUM_INPUTS][100];
+	unsigned short input_num;
+};
+
 
 extern struct ioelements io;
+
+extern struct debugframe df;
 
 extern int settings_owner;
 extern RT_HEAP settings_heap;
@@ -138,7 +143,7 @@ void finalize_block();
 
 void wait_for_task_end();
 void start_task(int priority, void* task_function);
-void func_try(int ret, char*func);
+int func_try(int ret, char*func);
 
 void* safe_malloc(int bytes);
 

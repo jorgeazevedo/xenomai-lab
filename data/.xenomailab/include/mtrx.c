@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011 Jorge Azevedo
+ * Copyright (C) 2013 Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 	int j=0,k=0,n=0;
 
 	if(matrix_is_invalid(str))
-		RETERROR("Matrix\n%s\nhas a syntax error!\n",str);
+		return ESYNTAX;
 
 	while(*str!=']' && *str!='\0') {
 	
@@ -46,7 +46,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 
 			//Are we out of bounds?
 			if((k>=CMAX)||(j>=RMAX))
-				RETERROR("Matrix %s exceedes max dim %dx%d!\n",str,CMAX,RMAX);
+				return ELARGE;
 		
 			//store it
 			aux.matrix[j][k] = atof(str);
@@ -59,7 +59,7 @@ int new_matrix_safe(Matrix* M1,char *str) {
 	}
 
 	if((j+1)*k != n)
-		RETERROR("Matrix %s dimension mismatch!\n",str);
+		return EMISMATCH;
 
 	aux.rows=j+1;
 	aux.columns=k;
@@ -82,7 +82,7 @@ Matrix new_matrix(char *str){
 	Matrix aux = empty_matrix(RMAX, CMAX);
 
 	if(new_matrix_safe(&aux,str))
-		ERROR("The given string is invalid %s\n",str);
+		MTXERROR("The given string is invalid %s\n",str);
 
 	return aux;
 }
@@ -105,7 +105,7 @@ int matrix_is_invalid(char *str){
 	size = strlen(str);
 	
 	if(!size)
-		RETERROR("Size is %d!\n",size);
+		return EEMPTY;
 
 	end = str + size -1;
 
@@ -115,9 +115,9 @@ int matrix_is_invalid(char *str){
 		end--;
 
 	if(*end != ']')
-		RETERROR("No terminating ]!\n");
+		return ENOCLOSER;
 	if(*str != '[')
-		RETERROR("No opening [!\n");
+		return ENOOPENER;
 
 	str++;
 	while(str < end){
@@ -126,7 +126,7 @@ int matrix_is_invalid(char *str){
 			(*str == ' ') || (*str == ';') ){
 			str++;
 		} else {
-			RETERROR("Invalid char: %c\n",*str);
+			return EINVALIDCHAR;
 		}
 	}
 
@@ -208,7 +208,7 @@ void matrix_print(Matrix *M1){
         char buf[500];
 
         matrix_string(M1,buf);
-        DEBUG("%s\n",buf);
+        PRINTOFFSET("%s\n",buf);
 
         return;
 }
@@ -232,7 +232,7 @@ void matrix_print_pretty(Matrix * M1, char* name, char* format){
 	//Print name of Matrix. We want this centered over middle row
 	
 	//Start with a space over the first space before |
-	DEBUG(" ");
+	PRINTOFFSET(" ");
 
 	//Build string with half ot the first row of the matrix
 	//(using matrix_string's algorithm)
@@ -283,7 +283,7 @@ int matrix_mul_safe(Matrix *M1, Matrix *M2, Matrix *Mdest){
 	int i, j, k;
 
 	if (M1->columns != M2->rows)
-		RETERROR("Dimensions mismatch (M1->columns (%d) != M2->rows (%d))\n",M1->columns,M2->rows);
+		return EMISMATCH;
 
 	// Inicializar Mdest
 	*Mdest = empty_matrix(M1->rows, M2->columns);
@@ -307,7 +307,7 @@ Matrix matrix_mul(Matrix *M1, Matrix *M2) {
 	Matrix aux = empty_matrix(RMAX, CMAX);
 
 	if(matrix_mul_safe(M1,M2,&aux))
-		ERROR("Failed to multiply given matrices.\n");
+		MTXERROR("Failed to multiply given matrices.\n");
 
 	return aux;
 }
@@ -354,7 +354,7 @@ Matrix matrix_minor(Matrix* M1, int row, int col){
 		}
 	}
 	else
-		ERROR("Index for minor out of range (%d,%d) is not valid for a (%d,%d) matrix\n",row,col,M1->rows,M1->columns);
+		MTXERROR("Index for minor out of range (%d,%d) is not valid for a (%d,%d) matrix\n",row,col,M1->rows,M1->columns);
 
 	return res;
 }
@@ -389,7 +389,7 @@ int matrix_det_safe(Matrix* Msrc,double* result){
 		}
 	}
 	else
-		RETERROR("Matrix is (%d,%d),must be square\n",Msrc->rows,Msrc->columns);
+		return ENOTSQUARE;
 	
 	*result=d;
 	return 0;
@@ -399,20 +399,21 @@ double matrix_det(Matrix *Msrc) {
 	double aux;
 
 	if(matrix_det_safe(Msrc,&aux))
-		ERROR("Calculation of determinant failed\n");
+		MTXERROR("Calculation of determinant failed\n");
 
 	return aux;
 }
 
 int matrix_inv_safe(Matrix* Msrc, Matrix* Mdest){
 	int i, j, m, n, x, y;
+	int ret;
 	double det,temp;
 
-	if(matrix_det_safe(Msrc,&det))
-		RETERROR("Failed to calculate determinant");
+	if((ret = matrix_det_safe(Msrc,&det)))
+		return ret;
 
 	if (det == 0)
-		RETERROR("Matrix is not inversable (determinant is zero)");
+		return EZERODET;
 
 	Matrix Mtmp = empty_matrix(Msrc->rows, Msrc->columns);
 	Matrix Maux = empty_matrix(Msrc->rows - 1, Msrc->columns - 1);
@@ -433,8 +434,8 @@ int matrix_inv_safe(Matrix* Msrc, Matrix* Mdest){
 		    Maux.matrix[m][n] = Msrc->matrix[x][y];
 		}
 	    }
-	    if(matrix_det_safe(&Maux,&temp))
-		RETERROR("Failed to calculate determinant");
+	    if((ret = matrix_det_safe(&Maux,&temp)))
+		return ret;
 
 	    Mtmp.matrix[i][j] = temp / det;
 
@@ -452,7 +453,7 @@ Matrix matrix_inv(Matrix *Msrc) {
 	Matrix aux;
 
 	if(matrix_inv_safe(Msrc,&aux))
-		ERROR("Calculation of inverse matrix failed\n");
+		MTXERROR("Calculation of inverse matrix failed\n");
 
 	return aux;
 }

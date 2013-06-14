@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011 Jorge Azevedo
+ * Copyright (C) 2013 Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
-
 #include "blockbase.h"
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QDoubleSpinBox>
+#include <QComboBox>
+#include <QDebug>
+#include <QAbstractButton>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QMessageBox>
+#include <QKeyEvent>
+
 
 RT_TASK rt_task;
 void BlockBase::blockSettingsInit(int argc, char *argv[],size_t gssize)

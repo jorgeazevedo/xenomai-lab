@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011 Jorge Azevedo
+ * Copyright (C) 2013 Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,26 +22,25 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define CHAR_BUFFER_SIZE 4096
+
 //size of matrix i sizeof(double)*RMAX*CMAX + sizeof(short)*2
 //On x86: 8 bytes and 2 bytes, respectively
 #define RMAX 8
 #define CMAX 8
 
-//Useful Macros
-//Commenting this define disables debug messages
-#define DEBUGON
+#define ESYNTAX 1      /* Matrix string has a syntax error */ 
+#define ELARGE 2       /* Matrix exceeds maximum dimensions */
+#define EMISMATCH 3    /* Dimensions mismatch */
+#define EEMPTY 4       /* Matrix string is empty */
+#define ENOOPENER 5    /* Matrix string has no opening '[' */
+#define ENOCLOSER 6    /* Matrix string has no closing ']' */
+#define EINVALIDCHAR 7 /* Matrix string has an invalid char */
+#define ENOTSQUARE 8   /* Matrix should be square but isn't */
+#define EZERODET 9     /* Matrix determinant is zero */
 
-#define ERROR(...) fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__),fprintf(stderr,__VA_ARGS__),fflush(stderr),exit(1)
-#define RETERROR(...) {fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__);fprintf(stderr,__VA_ARGS__);fflush(stderr);return 1;}
-
-#ifdef DEBUGON
-
-        #define DEBUG(...) printf("%20s: \t", __PRETTY_FUNCTION__),printf(__VA_ARGS__)
-#else
-        #define	DEBUG(...)
-#endif
-
-#define CHAR_BUFFER_SIZE 4096
+#define MTXERROR(...) fprintf(stderr, "E: %17s: ", __PRETTY_FUNCTION__),fprintf(stderr,__VA_ARGS__),fflush(stderr),exit(1)
+#define PRINTOFFSET(...) printf("%20s: \t", __PRETTY_FUNCTION__),printf(__VA_ARGS__)
 
 #ifdef	__cplusplus
 extern "C" {

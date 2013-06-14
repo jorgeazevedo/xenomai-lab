@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011 Jorge Azevedo
+ * Copyright (C) 2013 Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 int running=1;
 struct ioelements io;
+struct debugframe df;
 
 int settings_owner;
 RT_HEAP settings_heap;
@@ -135,29 +136,26 @@ void initialize_block(int argc, char* argv[],size_t struct_size, int min_inputs,
 	create_io();
 
         if(load_settings(io.config_file,struct_size))
-            ERROR("load_settings has failed");
+            ERROR("load_settings has failed\n");
 }
 
 void finalize_block(){
 
         if(save_settings(io.config_file))
-            ERROR("save_settings has failed");
+            ERROR("save_settings has failed\n");
 
 	free_args();
 	free_io();
 	
 	func_try(
 		rt_task_delete(&loop_task),
-		"rt_task_deleteLoop");
+		"rt_task_delete-Loop");
 
-	func_try(
-		rt_task_delete(&main_task),
-		"rt_task_deleteTask");
-
-	DEBUG("Terminated\n");
+	DEBUG("Successfully terminated\n");
 }
 
-void func_try(int ret, char*func){
+int func_try(int ret, char*func){
+
 	DEBUG("%s\n",func);
 	switch(ret){
 		case 0://sucess!
@@ -180,8 +178,11 @@ void func_try(int ret, char*func){
 		case -EWOULDBLOCK:
 			ERROR("-EWOULDBLOCK\n");
 		default:
-			ERROR("Failed with unknown error (%d)!\n",ret);
+			DEBUG("Returned unknown error (%d)!\n",ret);
+
 	}
+
+	return ret;
 }
 
 void start_task(int priority, void* task_function){
@@ -221,9 +222,8 @@ void* safe_malloc(int bytes){
 }
 
 
-int parse_string(char* original_string, short* num, char***string_vector, Matrix** mat_vector){
-	int i,strlen,value=0;
-	char buf[CHAR_BUFFER_SIZE];
+int parse_string(char* original_string, short* num, char***string_vector){
+	int i,strlen=0;
 
         if(original_string[0] == '\0'){
                 *num=0;
@@ -240,53 +240,24 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 
                 //get space for pointer to those strings
                 string_vector[0]=(char**)safe_malloc((*num)*sizeof(char*));
-
-		//reserve space for initializers
-		*mat_vector=(Matrix*)safe_malloc((*num)*sizeof(Matrix));
 		
                 for(i=0;i<*num;i++){
 
                         //ghetto strlen
                         for(strlen=0;(original_string[strlen]!=',')&&
-				     (original_string[strlen]!='\0')&&
-				     (original_string[strlen]!='=');strlen++);
-
-			//if we have init value, mark for processing
-                        if(original_string[strlen]=='=')
-				value=1;
+				     (original_string[strlen]!='\0');strlen++);
 			
                         //terminate string
                         original_string[strlen]='\0';
 
                         //name
                         string_vector[0][i]=(char*)safe_malloc((strlen+1)*sizeof(char));
+
 			//strcp
                         sprintf(string_vector[0][i],"%s",original_string);
 
                         //discard copied string
                         original_string+=strlen+1;
-
-			if(value){
-				//go to next stop condition
-				for(strlen=0;(original_string[strlen]!=',')&&
-					     (original_string[strlen]!='\0');strlen++);
-
-				//terminate string
-				original_string[strlen]='\0';
-
-                        	sprintf(buf,"%s", original_string);
-				//DEBUG("-%d->%s\n",i,buf);
-				if(new_matrix_safe(&mat_vector[0][i],buf))
-					ERROR("Failed to parse given matrix\n");
-				
-				//discard copied string
-				original_string+=strlen+1;
-
-				value=0;
-			}
-			else{
-				mat_vector[0][i]=empty_matrix(1,1);
-			}
 		}
 	}
 
@@ -296,7 +267,6 @@ int parse_string(char* original_string, short* num, char***string_vector, Matrix
 void parse_args(int argc, char* argv[]){
         struct arguments arguments;
         int i,strlen=0;
-	char buf[CHAR_BUFFER_SIZE];
 
         /* Default values. */
         arguments.input_queues = "";
@@ -328,22 +298,20 @@ void parse_args(int argc, char* argv[]){
         DEBUG("Config file is %s\n",io.config_file);
 
         //Process
-	parse_string(arguments.input_queues,&io.input_num,&io.input_strings,&io.input_init);
+	parse_string(arguments.input_queues,&io.input_num,&io.input_strings);
 
 	DEBUG("Input queues:\n");
         for(i=0;i<io.input_num;i++){
-		matrix_string(io.input_init+i,buf);
-                DEBUG("%d - %s with value %s\n",i,io.input_strings[i],buf);
+                DEBUG("%d - %s\n",i,io.input_strings[i]);
 	}
 	if(i==0)
 		DEBUG("None!\n");
 
-	parse_string(arguments.output_queues,&io.output_num,&io.output_strings,&io.output_init);
+	parse_string(arguments.output_queues,&io.output_num,&io.output_strings);
 
 	DEBUG("Output queues\n");
         for(i=0;i<io.output_num;i++){
-		matrix_string(io.output_init+i,buf);
-                DEBUG("%d - %s with value %s\n",i,io.output_strings[i],buf);
+                DEBUG("%d - %s\n",i,io.output_strings[i]);
 	}
 	if(i==0)
 		DEBUG("None!\n");
@@ -421,33 +389,27 @@ void assert_io_min(int min_input, int min_output)
 
 void create_io(void){
         int i;
-        //double init_value=0.0;
-	//PROPOSED:
-	Matrix init_value;
-	init_value=empty_matrix(1,1);
 
         io.input_queues=(RT_QUEUE*)safe_malloc(io.input_num*sizeof(RT_QUEUE));
         for(i=0;i<io.input_num;i++){
 
                 if(rt_queue_create(io.input_queues+i,io.input_strings[i],
-                sizeof(Matrix),MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
+                sizeof(Matrix),MAX_QUEUE_LENGTH,Q_FIFO|Q_SHARED)){
                         DEBUG("%s already exists, binding\n",io.input_strings[i]);
                         if(rt_queue_bind(io.input_queues+i,io.input_strings[i],TM_INFINITE))
                                 ERROR("Failed to create bind to queue %s!\n",io.input_strings[i]);
                 }
-                rt_queue_write(io.input_queues+i,&init_value,sizeof(init_value),Q_URGENT);
         }
 
         io.output_queues=(RT_QUEUE*)safe_malloc(io.output_num*sizeof(RT_QUEUE));
         for(i=0;i<io.output_num;i++){
 
                 if(rt_queue_create(io.output_queues+i,io.output_strings[i],
-                sizeof(Matrix),MAX_MESSAGE_LENGTH,Q_FIFO|Q_SHARED)){
+                MAX_QUEUE_LENGTH*sizeof(Matrix),MAX_QUEUE_LENGTH,Q_FIFO|Q_SHARED)){
                         DEBUG("%s already exists, binding\n",io.output_strings[i]);
                         if(rt_queue_bind(io.output_queues+i,io.output_strings[i],TM_INFINITE))
                                 ERROR("Failed to create and bind to queue %s!\n",io.output_strings[i]);
                 }
-                rt_queue_write(io.output_queues+i,&init_value,sizeof(init_value),Q_URGENT);
         }
 
 
@@ -459,6 +421,15 @@ void create_io(void){
 
         }
 
+	const char* debug_string = "debug";
+        io.debug_queue = (RT_QUEUE*) safe_malloc(sizeof(RT_QUEUE));
+
+	if(rt_queue_create(io.debug_queue,debug_string,
+			   MAX_DEBUG_QUEUE_LENGTH*sizeof(struct debugframe),MAX_DEBUG_QUEUE_LENGTH,Q_FIFO|Q_SHARED)){
+		DEBUG("%s already exists, binding\n",debug_string);
+		if(rt_queue_bind(io.debug_queue,debug_string,TM_INFINITE))
+			ERROR("Failed to create and bind to queue %s!\n",debug_string);
+	}
 }
 
 void free_io(void){
@@ -475,47 +446,112 @@ void free_io(void){
 	DEBUG("Deleted %d output queues\n",i);
 
         free(io.output_pipes);
+
+	free(io.debug_queue);
+}
+
+void str2vec(char dest[], const char* src)
+{
+	int i;
+	for(i=0;*(src+i) != '\0';i++)
+		dest[i] = *(src+i);
+	dest[i]='\0';
+}
+
+void inline debug_get_start_time(void){
+	df.start_time = (unsigned long long) rt_timer_read();
+}
+
+void inline debug_store_inputs(void){
+
+	int i;
+
+	df.input_num = io.input_num;
+
+        for(i=0;i<io.input_num;i++)
+		df.input[i] = io.input_result[i];
+
+	for(i=0;i<io.input_num;i++)
+		str2vec(df.input_name[i],*(io.input_strings+i));
+
+}
+
+void inline debug_get_end_time(void){
+	df.end_time = (unsigned long long) rt_timer_read();
+}
+
+void inline debug_store_output(Matrix * output){
+	df.output = *output;
+}
+
+void debug_write_queue(){
+	str2vec(df.block_name,io.block_name);
+	str2vec(df.config_file,io.config_file);
+
+	df.input_num = io.input_num;	
+//	DEBUG("s_t: %llu; e_d:%llu\n bn:%s, out:%4.0f, in:%4.0f, num:%d\n",df.start_time,df.end_time,df.block_name,df.output.matrix[0][0], df.input[0].matrix[0][0],df.input_num);
+	switch(rt_queue_write(io.debug_queue,&df,sizeof(df),Q_NORMAL)){
+		case -EINVAL:
+			DEBUG("%s queue does not exist!\n","debug");
+			break;
+		case -EIDRM:
+			DEBUG("%s queue has already been deleted !\n","debug");
+			break;
+		case -ENOMEM:
+			//DEBUG("%s queue is full!\n","debug");
+			break;
+		default:
+			/* DEBUG("%s written ok\n",io.output_strings[i]); */
+			break;
+	}
+
 }
 
 void read_inputs(){
 
 	read_input_queues();
 
-	/*
-	 * After this read_input_queues we want the settings
-	 * to be "static"
-	 */
+	//After this read_input_queues we want the settings to be "static"
 	settings_lock(&gs_mtx);
 }
 
 void read_input_queues()
 {
-        short i;
+        int i,ret = 0;
+	static int tick = 1;
 	Matrix sample;
 
-        for(i=0;i<io.input_num;i++){
-                switch(rt_queue_read(io.input_queues+i,&sample,sizeof(sample),1000000000)){
-                //switch(rt_queue_read(io.input_queues+i,&sample,sizeof(sample),TM_INFINITE)){
+        for(i=0;i<io.input_num;i++) {
+                ret = rt_queue_read(io.input_queues+i,&sample,sizeof(sample),1000000000);
+
+                switch(ret) {
 
 		case -EINVAL:
-			/*
-			 * This should happen when rt_queue_read times out. So we change
-			 * running to exit gracefuly
-			 */
-			DEBUG("%s queue does not exist! -EINVAL\n",io.input_strings[i]);
-			running=0;
+			WARNING("The \"%s\" queue has been deleted! Exiting gracefully. (-EINVAL %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+			running = 0;
 			break;
 		case -EIDRM:
-			DEBUG("%s queue has already been deleted! -EIDRM\n",io.input_strings[i]);
+			WARNING("The \"%s\" queue has been deleted! Exiting gracefully. (-EIDRM %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+			running = 0;
+			break;
+		case -ETIMEDOUT:
+			// Find out why we timed out and act accordingly
+			if(tick == 1) {
+				//Cyclical dependency, most probably
+				ERROR("The \"%s\" queue has timed out on the first try! Cyclical dependency? (-ETIMEDOUT %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+			} else {
+				//Parent has stopped writing to queue
+				WARNING("The \"%s\" queue has timed out! Exiting gracefully. (-ETIMEDOUT %d %s)\n",io.input_strings[i],ret,strerror(-ret));
+				running = 0;
+			}
 			break;
 		case -EWOULDBLOCK:
-			DEBUG("%s: EWOULDBLOCK\n",io.input_strings[i]);
+			WARNING("The \"%s\" queue was empty when I tried to read it. (-EWOULDBLOCK %d %s)\n",io.input_strings[i],ret,strerror(-ret));
 			break;
 		case -EINTR:
-			DEBUG("%s: -EINTR\n",io.input_strings[i]);
+			WARNING("I've been force to wake up while waiting for the \"%s\" queue. (-EINTR %d %s)\n",io.input_strings[i],ret,strerror(-ret));
 			break;
 		default:
-			/* DEBUG("%s: no issues\n",io.input_strings[i]); */
 			io.input_result[i]=sample;
 			break;
 
@@ -523,13 +559,16 @@ void read_input_queues()
 
 	}
 
-
+	tick++;
+	debug_get_start_time();
+	debug_store_inputs();
 }
 
 void write_outputs(Matrix sample)
 {
 	settings_unlock(&gs_mtx);
 	write_output_queues(&sample);
+	debug_write_queue();
 }
 
 void write_output_queues(Matrix* sample)
@@ -538,7 +577,7 @@ void write_output_queues(Matrix* sample)
 
 	for(i=0;i<io.output_num;i++){
 
-		switch(rt_queue_write(io.output_queues+i,sample,sizeof(*sample),Q_URGENT)){
+		switch(rt_queue_write(io.output_queues+i,sample,sizeof(*sample),Q_NORMAL)){
 		//switch(rt_queue_write(io.output_queues+i,&sample,sizeof(sample),Q_NORMAL|Q_BROADCAST)){
 			case -EINVAL:
 				DEBUG("%s queue does not exist!\n",io.output_strings[i]);
@@ -562,7 +601,8 @@ void write_output_queues(Matrix* sample)
                 rt_pipe_write(io.output_pipes+i, sample, sizeof(*sample), P_URGENT);
         }
 
-
+	debug_get_end_time();
+	debug_store_output(sample);
 }
 
 int register_mutex(RT_MUTEX* mut, char* name){
@@ -847,7 +887,7 @@ int load_settings(char * config_file,size_t size){
 	buf[i]='\0';
 
         if(register_mutex(&gs_mtx,buf))
-            RETERROR("register_mutex has failed");
+            RETERROR("register_mutex has failed\n");
 
 	//We either created a shm, or binded.
 	//If we created, gs is empty and we need to load it
@@ -919,7 +959,7 @@ int save_settings(char* config_file){
 		
                 //If this is called from settings, block name is 0
                 if(io.block_name!=0){
-                    sprintf(buf,"killall %s_settings",io.block_name);
+                    sprintf(buf,"killall %s_settings 2>/dev/null",io.block_name);
                     noWarning=system(buf);
                 }
 

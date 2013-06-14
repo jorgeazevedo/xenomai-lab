@@ -1,6 +1,6 @@
 /*
  * Xenomai Lab
- * Copyright (C) 2011 Jorge Azevedo
+ * Copyright (C) 2013 Jorge Azevedo
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,16 @@ void loop(void *arg){
 
 	while(running){
 		rt_task_wait_period(NULL);
+		
+		debug_get_start_time();
+		//XL forces this block to have inputs,
+		//so we force the count to zero to ignore it
+		io.input_num = 0;
+		debug_store_inputs();
 
 		write_output_queues(&outputMatrix);
+		debug_write_queue();
+		outputMatrix.matrix[0][0]++;
 
 		//Change period if changed in GUI
 		if(*current_period!=gs->sampling_period*1000){
